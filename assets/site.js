@@ -236,6 +236,35 @@ function countUp(el) {
   const full = d => [0, 5, 6].includes(d.getDay()) && (d.getDate() * 7 + d.getMonth()) % 6 === 0;
   const available = d => d > today && !closedMonth(d) && !full(d);
   const sameDay = (a, b) => a && b && a.getTime() === b.getTime();
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const daysBetween = (a, b) => Math.round((b - a) / 86400000);
+  // Con alojamiento se reserva un rango: cada noche (de la llegada al día antes de la salida) necesita cupo.
+  const lodging = () => state.stay !== 'day';
+  function maxNights(from) {
+    let n = 0;
+    while (n < limits.nights[1] && available(addDays(from, n))) n++;
+    return n;
+  }
+  const departure = () => addDays(state.day, state.nights);
+  let pickingEnd = false, rangeNote = '';
+  const fmt = d => `${weekday[d.getDay()]} ${d.getDate()} ${month[d.getMonth()]}`;
+
+  function pick(d) {
+    rangeNote = '';
+    if (lodging() && pickingEnd && d > state.day) {
+      const wanted = daysBetween(state.day, d), max = maxNights(state.day);
+      state.nights = Math.min(wanted, max);
+      if (wanted > max) rangeNote = `La noche del ${fmt(addDays(state.day, max))} no tiene cupo: tu estadía llega hasta el ${fmt(departure())}.`;
+      pickingEnd = false;
+    } else {
+      state.day = d;
+      if (lodging()) {
+        state.nights = Math.max(1, Math.min(state.nights, maxNights(d)));
+        pickingEnd = true;
+      }
+    }
+    render();
+  }
 
   function drawCalendar() {
     calMonth.textContent = `${monthName[view.getMonth()]} ${view.getFullYear()}`;
@@ -243,21 +272,29 @@ function countUp(el) {
     nextBtn.disabled = view >= last;
     const offset = (view.getDay() + 6) % 7, total = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
     cal.innerHTML = ['lu', 'ma', 'mi', 'ju', 'vi', 'sá', 'do'].map(d => `<span class="cal-dow">${d}</span>`).join('') + '<span></span>'.repeat(offset);
+    const end = lodging() ? departure() : null, reach = lodging() && pickingEnd ? maxNights(state.day) : 0;
     for (let n = 1; n <= total; n++) {
       const d = new Date(view.getFullYear(), view.getMonth(), n);
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'cal-day' + (closedMonth(d) ? ' is-closed' : full(d) ? ' is-full' : '') + (sameDay(d, today) ? ' is-today' : '');
+      const inRange = end && d > state.day && d < end, isEnd = end && sameDay(d, end);
+      // Al elegir la salida también se puede tocar un día sin cupo: esa mañana solo se sale, no se duerme.
+      const canEnd = reach && d > state.day && daysBetween(state.day, d) <= reach;
+      b.className = 'cal-day' + (closedMonth(d) ? ' is-closed' : full(d) ? ' is-full' : '') + (sameDay(d, today) ? ' is-today' : '')
+        + (inRange ? ' is-range' : '') + (isEnd ? ' is-end' : '') + (end && sameDay(d, state.day) ? ' is-start' : '');
       b.textContent = n;
-      b.disabled = !available(d);
-      b.setAttribute('aria-pressed', sameDay(d, state.day));
-      b.setAttribute('aria-label', `${weekday[d.getDay()]} ${n} de ${monthName[d.getMonth()]}${full(d) && !closedMonth(d) ? ', sin cupo' : ''}`);
-      b.addEventListener('click', () => { state.day = d; drawCalendar(); render(); });
+      b.disabled = !available(d) && !canEnd;
+      b.setAttribute('aria-pressed', sameDay(d, state.day) || !!isEnd);
+      b.setAttribute('aria-label', `${weekday[d.getDay()]} ${n} de ${monthName[d.getMonth()]}${sameDay(d, state.day) && end ? ', llegada' : ''}${isEnd ? ', salida' : ''}${full(d) && !closedMonth(d) ? ', sin cupo' : ''}`);
+      b.addEventListener('click', () => pick(d));
       cal.append(b);
     }
+    document.getElementById('bkDateLabel').textContent = lodging() ? 'Llegada y salida' : 'Día';
     calNote.textContent = closedMonth(view)
       ? 'El parque está cerrado de junio a septiembre: la nieve cubre el valle y el camino queda sin mantención.'
-      : 'De viernes a domingo se ingresa solo con reserva.';
+      : rangeNote || (lodging()
+        ? (pickingEnd ? `Llegada el ${fmt(state.day)}. Ahora toca el día de salida.` : `Llegada ${fmt(state.day)} · salida ${fmt(departure())}. Toca otro día para cambiar la llegada.`)
+        : 'De viernes a domingo se ingresa solo con reserva.');
   }
   prevBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCalendar(); });
   nextBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCalendar(); });
@@ -269,12 +306,23 @@ function countUp(el) {
   form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
     const [key, delta] = b.dataset.step.split(':');
     const [min, max] = limits[key];
-    state[key] = Math.min(max, Math.max(min, state[key] + Number(delta)));
+    const wanted = Math.min(max, Math.max(min, state[key] + Number(delta)));
+    rangeNote = '';
+    if (key === 'nights') {
+      // Las noches siguen el rango del calendario: no se puede sumar una noche sin cupo.
+      const fit = maxNights(state.day);
+      state.nights = Math.min(wanted, fit);
+      pickingEnd = false;
+      if (wanted > fit) rangeNote = `La noche del ${fmt(addDays(state.day, fit))} no tiene cupo: tu estadía llega hasta el ${fmt(departure())}.`;
+    } else state[key] = wanted;
     render();
   }));
   form.querySelectorAll('[data-stay]').forEach(b => b.addEventListener('click', () => {
     state.stay = b.dataset.stay;
     form.querySelectorAll('[data-stay]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    rangeNote = '';
+    pickingEnd = false;
+    if (lodging()) state.nights = Math.max(1, Math.min(state.nights, maxNights(state.day)));
     render();
   }));
   // Residentes: el descuento se aplica cuando el comprobante queda pre-validado; el guardaparque lo confirma al llegar.
@@ -321,13 +369,14 @@ function countUp(el) {
   function render() {
     const { adults, kids, nights, stay } = state;
     const a = amounts();
+    drawCalendar();
     document.getElementById('bkAdults').textContent = adults;
     document.getElementById('bkKids').textContent = kids;
     document.getElementById('bkNightsOut').textContent = nights;
     document.getElementById('bkNights').hidden = stay === 'day';
     const people = `${adults} adulto${adults > 1 ? 's' : ''}` + (kids ? ` y ${kids} niño${kids > 1 ? 's' : ''}` : '');
-    const when = state.day ? `${weekday[state.day.getDay()]} ${state.day.getDate()} ${month[state.day.getMonth()]}` : '';
-    const sleep = stay === 'day' ? names.day : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;
+    const when = stay === 'day' ? fmt(state.day) : `${fmt(state.day)} → ${fmt(departure())}`;
+    const sleep = stay === 'day' ? 'Sin alojamiento' : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;
     document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}${a.discount ? ' · 25% residente' : ''}`;
     document.getElementById('bkPayLabel').textContent = a.gate ? 'Pagas hoy' : 'Total';
     document.getElementById('bkTotal').textContent = clp(a.payNow);
@@ -345,7 +394,10 @@ function countUp(el) {
     e.preventDefault();
     const a = amounts(), { people, sleep } = render();
     const code = 'PAJ-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + String(state.day.getDate()).padStart(2, '0') + String(state.day.getMonth() + 1).padStart(2, '0');
-    const fullDate = `${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][state.day.getDay()]} ${state.day.getDate()} de ${monthName[state.day.getMonth()]} de ${state.day.getFullYear()}`;
+    const long = d => `${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][d.getDay()]} ${d.getDate()} de ${monthName[d.getMonth()]}`;
+    const fullDate = state.stay === 'day'
+      ? `${long(state.day)} de ${state.day.getFullYear()}`
+      : `${long(state.day)} al ${long(departure())}`;
     const paid = a.payNow ? `<div class="t-row"><span>Pagado en línea</span><b>${clp(a.payNow)}</b></div>` : '';
     const atGate = a.gate
       ? `<div class="t-row t-gate"><span>A pagar en la entrada</span><b>${clp(a.atGateResident)}</b></div><p class="t-small">Con 25% en la entrada adulto si acreditas residencia. Sin acreditar: ${clp(a.atGateFull)}.</p>`

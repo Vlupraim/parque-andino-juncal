@@ -195,8 +195,9 @@
       <p data-reveal style="--d:140ms">Elige el día, cuántos vienen y si se quedan a dormir.</p>
     </div>
     <form class="booker" data-reveal style="--d:180ms" onsubmit="return false">
+      <div class="bk-top">
       <div class="bk-block">
-        <span class="bk-label">Día</span>
+        <span class="bk-label" id="bkDateLabel">Día</span>
         <div class="cal">
           <div class="cal-head">
             <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior">‹</button>
@@ -252,6 +253,7 @@
           </div>
           <p class="proof-privacy">El guardaparque confirma el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
         </div>
+      </div>
       </div>
       <div class="bk-block">
         <span class="bk-label">¿Se quedan a dormir?</span>
