@@ -46,3 +46,5 @@ Tipografías: EB Garamond y Montserrat (licencia SIL OFL), en `_tools/fonts`.
 ## Pendiente
 
 Las fotos son las del sitio actual, enlazadas desde parqueandinojuncal.cl. Los cupos del calendario de reserva son de ejemplo y el pago todavía no está conectado.
+
+`privacidad.html` es un borrador alineado con la Ley 21.719: falta completar el RUT, el domicilio y los plazos de conservación, y que lo revise un abogado antes de publicarlo.

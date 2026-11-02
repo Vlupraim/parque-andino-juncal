@@ -214,8 +214,17 @@
         </div>
         <div class="proof" id="bkProof" hidden>
           <p class="proof-intro"><b>25% de descuento en la entrada adulto.</b> Sube una foto de un documento con tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
-          <label class="proof-drop" id="proofDrop">
-            <input type="file" id="proofFile" accept="image/*" capture="environment">
+          <div class="proof-notice">
+            <p><b>Cómo tratamos esta foto.</b> El documento muestra datos personales, como tu nombre y tu dirección. Lo usamos <b>solo para verificar que vives en una comuna con descuento</b>, y nada más.</p>
+            <ul>
+              <li>Se analiza <b>en tu dispositivo</b>: no se envía ni se guarda en ningún servidor.</li>
+              <li>Al terminar el análisis, <b>la foto y el texto leído se eliminan</b> de esta página. Solo queda el resultado: sí o no, y la comuna.</li>
+              <li>No se usa para otros fines, no se comparte con terceros y no se usa para publicidad.</li>
+            </ul>
+          </div>
+          <label class="check proof-consent"><input type="checkbox" id="proofConsent"> Acepto que se analice la foto de mi documento con este fin, según la <a href="privacidad.html#residencia">política de privacidad</a>.</label>
+          <label class="proof-drop" id="proofDrop" aria-disabled="true">
+            <input type="file" id="proofFile" accept="image/*" capture="environment" disabled>
             <span class="proof-cta"><b>Sube o toma una foto</b><small>JPG o PNG · el documento completo, plano y con buena luz</small></span>
             <img id="proofPreview" alt="" hidden>
           </label>
@@ -227,7 +236,8 @@
             <li data-check="doc">Tipo de documento reconocible</li>
           </ul>
           <p class="proof-status" id="proofStatus" aria-live="polite"></p>
-          <p class="proof-privacy">La imagen se analiza en tu dispositivo y no se envía a ningún servidor. El guardaparque confirmará el descuento con tu carnet al llegar.</p>
+          <button class="proof-delete" type="button" id="proofDelete" hidden>Eliminar foto y resultado</button>
+          <p class="proof-privacy">El guardaparque confirmará el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
         </div>
       </div>
       <div class="bk-block">
@@ -245,6 +255,7 @@
         <button class="button dark" type="submit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
       </div>
       <p class="bk-foot">Pago con Webpay o Mercado Pago. Tu entrada llega al correo con un código QR.</p>
+      <p class="data-note">Usamos tus datos solo para gestionar tu reserva y tu ingreso al parque, conforme a la Ley 21.719. <a href="privacidad.html">Cómo tratamos tus datos</a>.</p>
     </form>
   </div>
 </section>
@@ -332,6 +343,7 @@
         <div class="field"><label for="cMail">Correo</label><input id="cMail" name="correo" type="email" autocomplete="email" required></div>
         <div class="field"><label for="cMsg">Mensaje</label><textarea id="cMsg" name="mensaje" required></textarea></div>
         <button class="button dark" type="submit" data-magnetic><span class="magnetic-label">Enviar mensaje</span></button>
+        <p class="data-note">Usaremos tu nombre y correo solo para responderte. <a href="privacidad.html#contacto">Más información</a>.</p>
       </form>
       <div class="contact-side" data-reveal style="--d:100ms">
         <div class="map-frame"><iframe title="Mapa del Parque Andino Juncal" loading="lazy" src="https://www.google.com/maps?q=Parque+Andino+Juncal&amp;z=10&amp;output=embed"></iframe></div>
@@ -363,7 +375,7 @@
     </div>
     <div class="footer-bottom">
       <span>© 2026 Parque Andino Juncal · Comunidad Kenrick Lyon</span>
-      <span><a href="terminos.html">Términos y condiciones</a> · Maqueta del rediseño</span>
+      <span><a href="privacidad.html">Privacidad y datos personales</a> · <a href="terminos.html">Términos y condiciones</a> · Maqueta del rediseño</span>
     </div>
   </div>
 </footer>

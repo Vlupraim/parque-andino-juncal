@@ -279,13 +279,14 @@ function countUp(el) {
   }));
   // Residentes: el descuento se aplica cuando el comprobante queda pre-validado; el guardaparque lo confirma al llegar.
   const proof = document.getElementById('bkProof');
+  const proofCheck = checkResidence(ok => {
+    state.proofOk = ok;
+    render();
+  });
   document.getElementById('bkResident').addEventListener('change', e => {
     state.resident = e.target.checked;
     proof.hidden = !state.resident;
-    render();
-  });
-  checkResidence(file => {
-    state.proofOk = file;
+    if (!state.resident) proofCheck?.reset();
     render();
   });
 
@@ -349,19 +350,65 @@ function checkResidence(onResult) {
     return { brightness: mean, contrast: Math.sqrt(sq / g.length - mean * mean), sharpness: lapSq / n - (lapSum / n) ** 2 };
   }
 
+  // Ley 21.719: sin consentimiento no se puede subir; al terminar se borran la foto y el texto leído.
+  const consent = document.getElementById('proofConsent'), drop = document.getElementById('proofDrop'), del = document.getElementById('proofDelete');
+  let run = 0, objectUrl = null;
+  consent.addEventListener('change', () => {
+    input.disabled = !consent.checked;
+    drop.setAttribute('aria-disabled', !consent.checked);
+    if (!consent.checked) reset();
+  });
+
+  // Borra la imagen de la memoria de la página: vista previa, archivo seleccionado y enlace temporal.
+  function wipeImage() {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = null;
+    preview.removeAttribute('src');
+    preview.hidden = true;
+    input.value = '';
+  }
+  // Borra además el resultado y quita el descuento.
+  function reset() {
+    run++;
+    wipeImage();
+    checks.hidden = true;
+    status.textContent = '';
+    status.dataset.state = '';
+    del.hidden = true;
+    onResult(false);
+  }
+  del.addEventListener('click', reset);
+
   input.addEventListener('change', async () => {
     const file = input.files[0];
-    if (!file) return;
+    if (!file || !consent.checked) return;
+    const current = ++run;
     onResult(false);
     checks.hidden = false;
+    del.hidden = false;
+    del.textContent = 'Cancelar y eliminar la foto';
     checks.querySelectorAll('li').forEach(li => { li.dataset.state = 'wait'; li.dataset.note = ''; });
     status.dataset.state = '';
     status.textContent = 'Revisando la foto…';
+    try {
+      await analyze(file, current);
+    } finally {
+      // Pase lo que pase, la foto no queda en la página.
+      if (current === run) {
+        wipeImage();
+        del.textContent = 'Eliminar resultado';
+        status.insertAdjacentHTML('beforeend', '<span class="proof-wiped">La foto y el texto leído ya se eliminaron de esta página.</span>');
+      }
+    }
+  });
+
+  async function analyze(file, current) {
     await new Promise(done => {
       preview.onload = preview.onerror = done;
-      preview.src = URL.createObjectURL(file);
+      preview.src = objectUrl = URL.createObjectURL(file);
       preview.hidden = false;
     });
+    if (current !== run) return;
 
     const longSide = Math.max(preview.naturalWidth, preview.naturalHeight);
     mark('size', longSide >= 1000 ? 'ok' : 'warn', longSide >= 1000 ? '' : `${longSide}px: acércate o usa más resolución`);
@@ -380,8 +427,10 @@ function checkResidence(onResult) {
     try {
       const T = await loadTesseract();
       const { data } = await T.recognize(file, 'spa', {
-        logger: m => { if (m.status === 'recognizing text') status.textContent = `Leyendo el documento… ${Math.round(m.progress * 100)}%`; }
+        logger: m => { if (m.status === 'recognizing text' && current === run) status.textContent = `Leyendo el documento… ${Math.round(m.progress * 100)}%`; }
       });
+      if (current !== run) return;
+      // El texto leído solo vive dentro de esta función: se busca la comuna y se descarta.
       const text = normal(data.text);
       const comuna = COMUNAS.find(c => text.includes(c));
       const doc = DOCS.find(k => text.includes(k));
@@ -396,11 +445,13 @@ function checkResidence(onResult) {
         status.textContent = 'No encontramos una comuna de San Felipe o Los Andes en el documento. Prueba con otra foto, o acredítalo al llegar y se aplica el descuento en la entrada.';
       }
     } catch {
+      if (current !== run) return;
       mark('comuna', 'skip'); mark('doc', 'skip');
       status.dataset.state = 'warn';
       status.textContent = 'No pudimos leer el documento ahora. Puedes acreditar tu residencia al llegar.';
     }
-  });
+  }
+  return { reset };
 }
 
 // Noticias: pila de fotos que rota sola mientras se ve; con el mouse encima se abre en abanico y se detiene.

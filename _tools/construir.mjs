@@ -78,7 +78,7 @@ export const footer = p => `<footer class="site-footer">
     </div>
     <div class="footer-bottom">
       <span>© 2026 Parque Andino Juncal · Comunidad Kenrick Lyon</span>
-      <span><a href="${p}terminos.html">Términos y condiciones</a> · Maqueta del rediseño</span>
+      <span><a href="${p}privacidad.html">Privacidad y datos personales</a> · <a href="${p}terminos.html">Términos y condiciones</a> · Maqueta del rediseño</span>
     </div>
   </div>
 </footer>`;
@@ -466,6 +466,57 @@ out.push(page('terminos.html', {
 <p>Toda empresa que realice actividades comerciales en el parque debe presentarse con anticipación ante la Administración.</p>
 <h2>Renuncia de responsabilidad</h2>
 <p>El Parque Andino Juncal no será responsable por lesiones, daños o costos incurridos por los visitantes. La visita supone riesgos propios de la naturaleza, que todos los visitantes asumen al entrar. El ingreso implica una liberación expresa y anticipada de responsabilidad de los propietarios y funcionarios del parque por lesiones, daños materiales o muerte con motivo de la visita. El cuidado de tu salud e integridad te corresponde total y exclusivamente.</p>
+</article>`
+}));
+
+// Borrador alineado con la Ley 21.719; los datos marcados como pendientes los completa el parque y lo revisa un abogado.
+out.push(page('privacidad.html', {
+  title: 'Privacidad y datos personales', description: 'Cómo el Parque Andino Juncal trata los datos personales de sus visitantes, conforme a la Ley 21.719.',
+  hero: { photo: foto.pajonal, crumbs: 'Privacidad', title: 'Privacidad y datos personales', lead: 'Qué datos pedimos, para qué y cuánto tiempo los guardamos.' },
+  body: () => `<article class="prose">
+<p class="legal-meta"><span><b>Versión:</b> borrador de noviembre de 2026</span><span>Pendiente de revisión legal antes de publicarse</span></p>
+<p class="lede">Pedimos solo los datos que necesitamos para recibirte en el parque con seguridad, y los tratamos conforme a la Ley 21.719 sobre protección de datos personales.</p>
+
+<h2>Quién es el responsable</h2>
+<p><b>Comunidad Kenrick Lyon, Parque Andino Juncal.</b> RUT: [pendiente]. Domicilio: [pendiente]. Contacto para temas de datos personales: <a href="mailto:info@parqueandinojuncal.cl">info@parqueandinojuncal.cl</a>, con el asunto «Datos personales».</p>
+
+<h2>Qué datos tratamos y para qué</h2>
+<table>
+  <tr><th>Cuándo</th><th>Datos</th><th>Para qué</th><th>Cuánto tiempo</th></tr>
+  <tr><td>Reserva</td><td>Nombre, RUT, correo, teléfono, fecha, número de visitantes y alojamiento.</td><td>Gestionar tu reserva, emitir tu entrada y controlar los cupos.</td><td>[pendiente, p. ej. 12 meses]; lo tributario, según exige la ley.</td></tr>
+  <tr><td>Ficha del visitante</td><td>Itinerario y contacto de emergencia.</td><td>Tu seguridad en la montaña y la búsqueda en caso de emergencia.</td><td>Hasta el fin de la temporada.</td></tr>
+  <tr><td>Pago</td><td>Monto y estado del pago.</td><td>Confirmar tu reserva. Los datos de tu tarjeta los procesa el proveedor de pago (Webpay o Mercado Pago); nosotros no los vemos ni los guardamos.</td><td>Según la normativa tributaria.</td></tr>
+  <tr><td>Formulario de contacto</td><td>Nombre, correo y mensaje.</td><td>Responder tu consulta.</td><td>[pendiente, p. ej. 12 meses].</td></tr>
+</table>
+
+<h2 id="residencia">Comprobante de residencia</h2>
+<p>Para el descuento de residentes de las provincias de San Felipe y Los Andes puedes subir la foto de un documento con tu domicilio. Ese documento contiene datos personales, como tu nombre y tu dirección, por eso lo tratamos así:</p>
+<ul>
+  <li><b>Solo con tu consentimiento</b>, que das al marcar la casilla antes de subir la foto y que puedes retirar cuando quieras.</li>
+  <li><b>Una sola finalidad:</b> comprobar que vives en una de las 10 comunas con descuento. No la usamos para nada más, no la compartimos y no la usamos con fines comerciales.</li>
+  <li><b>Se analiza en tu dispositivo.</b> La foto no se envía a nuestros servidores ni a los de terceros, y no se guarda.</li>
+  <li><b>Se elimina al terminar el análisis.</b> La página borra la foto y el texto leído. Solo queda el resultado (sí o no, y la comuna), que se asocia a tu reserva para aplicar el descuento.</li>
+  <li><b>No es una decisión definitiva.</b> La revisión automática solo filtra fotos ilegibles. Si no aprueba, puedes acreditar tu residencia en la entrada y una persona lo revisa. En la entrada, el guardaparque mira tu carnet sin fotocopiarlo ni guardarlo.</li>
+</ul>
+<p>Si prefieres no subir ninguna foto, puedes mostrar el documento al llegar y se aplica igual el descuento.</p>
+
+<h2 id="contacto">Formulario de contacto</h2>
+<p>Usamos tu nombre y tu correo solo para responderte. No los agregamos a listas de correo sin tu autorización.</p>
+
+<h2>Navegación por el sitio</h2>
+<p>No usamos cookies de seguimiento ni de publicidad. El sitio guarda en tu navegador un único dato temporal, que se borra al cerrar la pestaña, para mostrar la transición entre páginas.</p>
+<p>Al cargar algunas partes del sitio, tu navegador se conecta a servicios de terceros, que pueden recibir tu dirección IP: Google Fonts (tipografías), Google Maps (el mapa de cómo llegar) y jsDelivr (la herramienta de lectura de documentos, solo si subes un comprobante).</p>
+
+<h2>Tus derechos</h2>
+<p>Puedes pedirnos en cualquier momento <b>acceder</b> a tus datos, <b>rectificarlos</b>, <b>suprimirlos</b>, <b>oponerte</b> a su tratamiento, pedir su <b>portabilidad</b> o su <b>bloqueo temporal</b>, y retirar tu consentimiento. Escríbenos a <a href="mailto:info@parqueandinojuncal.cl">info@parqueandinojuncal.cl</a> con el asunto «Datos personales» y te responderemos dentro del plazo legal.</p>
+<p>Si no quedas conforme con nuestra respuesta, puedes reclamar ante la Agencia de Protección de Datos Personales.</p>
+
+<h2>Seguridad y menores de edad</h2>
+<p>Aplicamos medidas para proteger tus datos frente a accesos no autorizados, pérdida o alteración, y solo acceden a ellos las personas del parque que los necesitan para su trabajo.</p>
+<p>Los datos de niños y niñas los entrega el adulto responsable que hace la reserva, y solo se usan para su ingreso y su seguridad.</p>
+
+<h2>Cambios a esta política</h2>
+<p>Si cambiamos esta política, publicaremos la nueva versión en esta página con su fecha.</p>
 </article>`
 }));
 
