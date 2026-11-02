@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parque Andino Juncal · Maqueta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* Maqueta conceptual. Barra y hero portados de munozyzavando.cl (narrative.css, navigation-glass.js, hero-motion.js). */
+:root {
+  --ink: #16302a; --body: #55635e; --paper: #f6f4ee; --soft: #ebe8de; --line: #d8d3c4;
+  --forest: #1f4a3d; --glacier: #cfe3e6; --ochre: #b8863b;
+  --ease: cubic-bezier(.22,1,.36,1);
+  --sans: 'IBM Plex Sans', system-ui, sans-serif; --serif: 'EB Garamond', Garamond, Georgia, serif;
+}
+* { box-sizing: border-box }
+html { scroll-behavior: smooth; scroll-padding-top: 100px; overflow-x: clip }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased }
+a { color: inherit; text-decoration: none }
+h1, h2, h3, p { margin: 0 }
+h1, h2, h3 { font-family: var(--serif); font-weight: 500 }
+.wrap { width: min(1200px, calc(100% - 96px)); margin-inline: auto }
+.eyebrow { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 500 }
+
+/* ───────── Barra: nace integrada; a los 72px se desprende como cápsula de vidrio ───────── */
+.pillbar {
+  position: fixed; top: 0; left: 50%; z-index: 100;
+  width: 100%; border-radius: 0; isolation: isolate;
+  transform: translateX(-50%);
+  transition: top 650ms var(--ease), width 650ms var(--ease), border-radius 650ms var(--ease), box-shadow 650ms;
+}
+.glass-bg { position: absolute; inset: 0; z-index: -1; border-radius: inherit; overflow: hidden; background: transparent; transition: background .35s, box-shadow .3s }
+.glass-bg::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  background: radial-gradient(ellipse at 28% 0%, #ffffff1f, #ffffff03 58%, transparent 82%); transition: opacity .4s }
+.pillbar::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; padding: 1.4px;
+  background: linear-gradient(180deg, #ffffffd9, #ffffff47 20%, transparent 43%, transparent 60%, #ffffff4d 80%, #ffffffb8);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; transition: opacity .4s }
+.nav-inner { width: min(1200px, calc(100% - 96px)); margin-inline: auto; min-height: 108px; display: flex; align-items: center; gap: 36px;
+  transition: min-height 650ms var(--ease), width 650ms }
+/* Logo en dos capas: el texto queda quieto y el pájaro, posado en la J, vuela solo. */
+.brand-logo { position: relative; display: block; height: 82px; aspect-ratio: 935.9 / 410.7; color: #fff; transition: height 650ms var(--ease), color 400ms }
+.logo-text { position: absolute; inset: 0; width: 100%; height: 100% }
+.ave-host { position: absolute }
+.ave { display: block; width: 100%; height: auto; fill: currentColor; overflow: visible }
+.pillbar.nav-detached.on-light .brand-logo { color: var(--ink) }
+.nav-links { display: flex; gap: clamp(18px, 2.6vw, 38px); flex: 1 }
+.nav-links a, .nav-dropdown > summary { position: relative; display: flex; align-items: center; gap: 9px; min-height: 44px; font-size: 15px; font-weight: 500; letter-spacing: .02em; color: #fff; cursor: pointer; list-style: none; white-space: nowrap; transition: color 200ms, text-shadow 200ms }
+.nav-dropdown > summary::-webkit-details-marker { display: none }
+.nav-chevron { width: 6px; height: 6px; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform 220ms }
+.nav-dropdown { position: relative }
+.nav-dropdown[open] .nav-chevron { transform: translateY(2px) rotate(225deg) }
+.nav-dropdown-panel { position: absolute; left: -20px; top: calc(100% + 14px); min-width: 230px; padding: 10px; border-radius: 16px;
+  border: 1px solid #ffffff66; border-bottom-color: #ffffff24; background: rgb(255 255 255 / 4%);
+  backdrop-filter: blur(10px) saturate(165%) brightness(1.06); -webkit-backdrop-filter: blur(10px) saturate(165%) brightness(1.06);
+  box-shadow: 0 14px 34px -19px #031f4459, inset 0 1px 1px #ffffffa6, inset 0 -1px 1px #ffffff30;
+  transform-origin: 50% 0; animation: unfold 280ms var(--ease) both }
+.nav-dropdown-panel::before { content: ''; position: absolute; top: -16px; left: 0; right: 0; height: 16px }
+.nav-dropdown-panel a { display: flex; padding: 11px 14px; border-radius: 8px; font-size: 13.5px; color: #fff; text-shadow: 0 1px 3px #001a2680 }
+.nav-dropdown-panel a:hover { background: #ffffff24 }
+@keyframes unfold { from { opacity: 0; transform: translateY(-8px) scale(.98) } }
+.nav-cta { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 500;
+  border: 1px solid #ffffff65; background: #ffffff12; color: #fff; transition: background .35s, border-color .35s, color .35s }
+.nav-cta:hover { background: #ffffff26 }
+
+.pillbar.nav-detached { top: 18px; width: min(1280px, calc(100% - 48px)); border-radius: 999px; box-shadow: 0 16px 40px -20px #0a2a2066 }
+.pillbar.nav-detached::before, .pillbar.nav-detached .glass-bg::after { opacity: 1 }
+.pillbar.nav-detached .glass-bg { background: rgb(255 255 255 / 8%); backdrop-filter: blur(8px) saturate(125%); -webkit-backdrop-filter: blur(8px) saturate(125%);
+  box-shadow: inset 0 1px 1px #ffffffcc, inset 0 -1px 1px #ffffff66 }
+.pillbar.nav-detached .nav-inner { width: calc(100% - 44px); min-height: 64px }
+.pillbar.nav-detached .brand-logo { height: 54px }
+.pillbar.nav-detached .nav-cta { background: var(--forest); border-color: var(--forest) }
+/* Tinta adaptable. MZ muestrea los píxeles de la foto; la maqueta solo distingue hero / papel. */
+.pillbar.nav-detached.on-light .nav-links a, .pillbar.nav-detached.on-light .nav-dropdown > summary { color: var(--ink) }
+.pillbar.nav-detached.on-light .glass-bg { background: rgb(246 244 238 / 72%) }
+.pillbar.nav-detached.on-light .nav-dropdown-panel a { color: var(--ink); text-shadow: none }
+.pillbar.nav-detached.on-light .nav-dropdown-panel { background: rgb(250 248 242 / 90%); border-color: #16302a1a }
+.pillbar.nav-detached.on-light .nav-dropdown-panel a:hover { background: #1f4a3d12 }
+.pillbar.nav-detached:not(.on-light) .nav-links a, .pillbar.nav-detached:not(.on-light) summary { text-shadow: 0 1px 3px #001a2680 }
+.pillbar.nav-releasing { animation: nav-release 850ms both }
+/* Variante anclada: al desacoplarse queda sellada arriba, de borde a borde, con el mismo vidrio y rebote. */
+.pillbar.nav-anchored.nav-detached { top: 0; width: 100%; border-radius: 0; box-shadow: 0 14px 34px -22px #0a2a2066 }
+.pillbar.nav-anchored.nav-detached::before { padding: 0 0 1px; background: linear-gradient(90deg, #ffffff30, #ffffffb3 30%, #ffffffb3 70%, #ffffff30) }
+/* El vidrio se extiende fuera de pantalla arriba y a los lados: así el desenfoque no deja un corte duro y se funde hacia arriba. */
+.pillbar.nav-anchored.nav-detached .glass-bg { inset: -40px -40px 0; box-shadow: none }
+.pillbar.nav-anchored.nav-detached .glass-bg::after { background: linear-gradient(180deg, #ffffff14, transparent 70%) }
+.pillbar.nav-anchored.nav-detached .nav-inner { width: min(1200px, calc(100% - 96px)); min-height: 72px }
+.pillbar.nav-anchored.nav-detached.on-light::before { background: linear-gradient(90deg, transparent, #16302a26 20%, #16302a26 80%, transparent) }
+/* Feedback al pasar el mouse: subrayado que se dibuja desde la izquierda y los demás enlaces se atenúan. */
+.nav-links > a::after, .nav-dropdown > summary::after { content: ''; position: absolute; left: 0; right: 0; bottom: 8px; height: 1.5px; border-radius: 2px;
+  background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform 320ms var(--ease) }
+.nav-dropdown > summary::after { right: 15px }
+.nav-links > a:hover::after, .nav-dropdown > summary:hover::after, .nav-dropdown[open] > summary::after, .nav-links > a:focus-visible::after { transform: scaleX(1) }
+.nav-links > *, .nav-cta { transition: opacity 250ms }
+@media (hover: hover) { .nav-links:hover > :not(:hover):not([open]) { opacity: .62 } }
+/* Botón magnético: el botón y su texto siguen levemente al cursor y vuelven con un resorte. */
+[data-magnetic] { transition: transform 600ms cubic-bezier(.2,.8,.2,1.35), background .35s, border-color .35s, color .35s, box-shadow .35s; will-change: transform }
+[data-magnetic] .magnetic-label { display: inline-block; transition: transform 600ms cubic-bezier(.2,.8,.2,1.35) }
+[data-magnetic].is-pulled, [data-magnetic].is-pulled .magnetic-label { transition-duration: 160ms; transition-timing-function: ease-out }
+.nav-cta[data-magnetic]:hover { box-shadow: 0 10px 24px -12px #0a2a2099 }
+@keyframes nav-release {
+  0% { transform: translateX(-50%) translateY(-10px) scaleX(1.025) scaleY(.94) }
+  48% { transform: translateX(-50%) translateY(3px) scaleX(.995) scaleY(1.035) }
+  75% { transform: translateX(-50%) translateY(-1px) scaleX(1.002) scaleY(.99) }
+  100% { transform: translateX(-50%) translateY(0) scale(1) }
+}
+.menu-toggle { display: none }
+
+/* ───────── Hero: diapositivas con fundido y zoom lento ───────── */
+.hero { position: relative; height: 100svh; min-height: 680px; overflow: hidden; background: #2b3a36; color: #fff; isolation: isolate; display: grid; place-items: center }
+.hero-photo { position: absolute; inset: 0; z-index: -3; background: center / cover no-repeat; opacity: 0; transform: scale(1.005) }
+.hero-photo.is-first { opacity: 1 }
+.hero-wash { position: absolute; inset: 0; z-index: -2; background: linear-gradient(180deg, #0b1f1a99, #0b1f1a59 35%, #0b1f1a73 70%, #0b1f1acc) }
+.hero-content { text-align: center; max-width: 860px; padding: 120px 24px 80px }
+.hero .eyebrow { color: var(--glacier) }
+.hero h1 { font-size: clamp(44px, 6vw, 86px); line-height: 1.05; letter-spacing: -.02em; margin: 24px 0; text-wrap: balance }
+.hero p.lead { font-size: clamp(18px, 1.6vw, 22px); color: #e4ece8; max-width: 640px; margin-inline: auto }
+.hero-actions { display: flex; gap: 28px; justify-content: center; align-items: center; margin-top: 38px; flex-wrap: wrap }
+.button { display: inline-flex; align-items: center; min-height: 56px; padding: 14px 34px; border-radius: 999px; background: #f2f4ec; color: var(--forest); font-weight: 500; transition: transform .3s cubic-bezier(.2,.8,.3,1.5), box-shadow .25s }
+.button:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px #0006 }
+.button.dark { background: var(--forest); color: #fff }
+.text-link { border-bottom: 1px solid currentColor; padding-bottom: 4px; font-weight: 500 }
+.hero-caption { position: absolute; left: max(48px, calc((100% - 1200px)/2)); bottom: 32px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #dfe9e4; display: flex; gap: 14px; align-items: center }
+.hero-dots { display: flex; gap: 6px }
+.hero-dots span { width: 22px; height: 2px; background: #ffffff55; transition: background .4s }
+.hero-dots span.on { background: #fff }
+.hero-motion-toggle { position: absolute; right: max(36px, calc((100% - 1200px)/2)); bottom: 24px; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 999px;
+  border: 1px solid #ffffff55; background: #ffffff12; color: #fff; backdrop-filter: blur(10px); cursor: pointer }
+.hero-motion-toggle svg { width: 20px; height: 20px; fill: currentColor }
+.hero-motion-toggle .play, .hero-motion-toggle[aria-pressed="true"] .pause { display: none }
+.hero-motion-toggle[aria-pressed="true"] .play { display: block }
+
+/* ───────── Bloques de estructura (maqueta) ───────── */
+.section { padding: 110px 0 }
+.section.alt { background: var(--soft) }
+.section.dark { background: var(--forest); color: #eef2ec; border: 0 }
+.note { display: inline-flex; gap: 8px; align-items: center; margin-bottom: 26px; padding: 6px 12px; border: 1px dashed var(--ochre); border-radius: 6px;
+  font: 500 12px/1.4 var(--sans); color: #8a6224; background: #b8863b14 }
+.dark .note { color: #e9c98f; border-color: #e9c98f88 }
+.note b { font-weight: 600 }
+h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.12; letter-spacing: -.015em; margin: 14px 0 18px; text-wrap: balance }
+.section .eyebrow { color: var(--ochre) }
+.lead2 { font-size: 19px; color: var(--body); max-width: 56ch }
+.dark .lead2 { color: #c9d6cf }
+.grid { display: grid; gap: 22px; margin-top: 48px }
+.g2 { grid-template-columns: 1fr 1fr } .g3 { grid-template-columns: repeat(3, 1fr) } .g4 { grid-template-columns: repeat(4, 1fr) }
+.box { border: 1px solid var(--line); border-radius: 18px; padding: 26px; background: #fffdf8 }
+.dark .box { background: #ffffff0d; border-color: #ffffff26 }
+.box h3 { font-size: 22px; margin-bottom: 8px }
+.box p { color: var(--body); font-size: 15px }
+.dark .box p { color: #c9d6cf }
+.ph { aspect-ratio: 4/3; border-radius: 12px; margin-bottom: 18px; background: repeating-linear-gradient(45deg, #e2ddcf 0 10px, #ebe7db 10px 20px); display: grid; place-items: center; font-size: 12px; color: #8b8573; letter-spacing: .1em; text-transform: uppercase }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center }
+.split .ph { aspect-ratio: 5/4; margin: 0 }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 56px; border-top: 1px solid #ffffff2e }
+.stats div { padding: 30px 24px 0 0 }
+.stats strong { display: block; font: 400 clamp(38px, 4vw, 58px)/1 var(--serif); color: #fff }
+.stats span { font-size: 14px; color: #bfd0c7 }
+.price { font: 400 34px/1 var(--serif); margin: 16px 0 6px; color: var(--forest) }
+.tag { display: inline-block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--glacier); color: #27474d; margin-bottom: 14px }
+.rules { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 40px }
+.rules div { text-align: center; padding: 22px 10px; border-radius: 14px; background: #fffdf8; border: 1px solid var(--line); font-size: 13px; color: var(--body) }
+.rules i { display: block; font-style: normal; font-size: 26px; margin-bottom: 8px }
+.booking { display: grid; grid-template-columns: 1.1fr .9fr; gap: 26px; margin-top: 48px }
+.step-list { counter-reset: s; display: grid; gap: 12px }
+.step-list li { list-style: none; display: grid; grid-template-columns: 38px 1fr; gap: 14px; align-items: start; padding: 16px; border-radius: 14px; background: #fffdf8; border: 1px solid var(--line) }
+.step-list li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--forest); color: #fff; font-weight: 600 }
+.step-list b { display: block } .step-list span { font-size: 14px; color: var(--body) }
+.widget { border-radius: 22px; padding: 28px; background: #fff; box-shadow: 0 20px 50px -30px #1f4a3d55; border: 1px solid var(--line) }
+.widget .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px }
+.widget .row:last-of-type { border: 0; font-weight: 600 }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 14px 0 18px; font-size: 12px; text-align: center }
+.cal span { padding: 8px 0; border-radius: 8px; background: var(--soft) }
+.cal .full { background: #f1d9d3; color: #9a4b3d; text-decoration: line-through }
+.cal .sel { background: var(--forest); color: #fff }
+.sitemap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 44px }
+.sitemap div { padding: 20px; border-radius: 14px; border: 1px solid #ffffff2e; background: #ffffff0a }
+.sitemap h3 { font-size: 20px; color: #fff; margin-bottom: 10px }
+.sitemap ul { margin: 0; padding: 0 0 0 16px; font-size: 14px; color: #c9d6cf; line-height: 1.9 }
+.sitemap .new { color: #e9c98f }
+footer { padding: 60px 0; background: #10261f; color: #9fb3aa; font-size: 14px }
+
+/* ───────── Bloques rediseñados: sin líneas divisorias, cada sección se funde con la siguiente ───────── */
+/* La leyenda y la pausa del hero suben para dejar lugar a la tarjeta de estado que lo monta. */
+.hero .hero-caption { bottom: 128px } .hero .hero-motion-toggle { bottom: 118px }
+.hero-content { padding-bottom: 150px }
+
+/* Aparición al hacer scroll: sube y se aclara una sola vez, con desfase por elemento (--d). */
+[data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 900ms var(--ease), transform 900ms var(--ease); transition-delay: var(--d, 0ms) }
+[data-reveal].is-in { opacity: 1; transform: none }
+@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; transition: none } }
+
+/* Bloque 1 · estado del parque: tarjeta de vidrio que monta el borde inferior del hero. */
+.status { position: relative; z-index: 3; margin-top: -92px; padding-bottom: 20px; background: linear-gradient(180deg, transparent 92px, var(--paper) 92px) }
+.status-card { display: grid; grid-template-columns: auto 1fr auto; gap: 40px; align-items: center; padding: 28px 34px; border-radius: 24px;
+  background: rgb(250 248 242 / 86%); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid #ffffffb3; box-shadow: 0 30px 60px -34px #0b1f1a73, inset 0 1px 1px #fff }
+.status-title { font: 500 32px/1.1 var(--serif) }
+.status-sub { color: var(--body); font-size: 15px; margin-top: 4px }
+.status-facts { display: flex; gap: 0; justify-content: center }
+.status-facts div { padding: 4px 26px; border-left: 1px solid #16302a1f }
+.status-facts div:first-child { border: 0 }
+.status-facts b { display: block; font: 400 26px/1.1 var(--serif); color: var(--forest) }
+.status-facts span { font-size: 13px; color: var(--body) }
+.status-facts .warn b { color: #a86a1c }
+.status-card .button { min-height: 52px; padding: 12px 28px }
+.status-title, .status-facts b, .status-facts span { white-space: nowrap }
+@media (max-width: 1180px) {
+  .status-card { grid-template-columns: 1fr auto; row-gap: 22px }
+  .status-facts { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; padding-top: 20px; border-top: 1px solid #16302a14 }
+  .status-facts div:first-child { padding-left: 0 }
+}
+
+/* Bloque 2 · El parque: manifiesto centrado sobre curvas de nivel. */
+.manifesto { position: relative; padding: 120px 0 150px; text-align: center; overflow: hidden;
+  background:
+    repeating-radial-gradient(ellipse 60% 48% at 12% 18%, transparent 0 26px, #1f4a3d0d 26px 27px),
+    repeating-radial-gradient(ellipse 52% 60% at 92% 88%, transparent 0 30px, #1f4a3d0b 30px 31px),
+    var(--paper) }
+.manifesto .eyebrow { color: var(--ochre) }
+.manifesto h2 { font-size: clamp(36px, 4.6vw, 64px); line-height: 1.08; max-width: 18ch; margin: 22px auto 28px }
+.manifesto h2 em { font-style: italic; color: var(--forest) }
+.manifesto p { font-size: 19px; line-height: 1.75; color: var(--body); max-width: 58ch; margin: 0 auto }
+.signature { display: inline-flex; align-items: center; gap: 16px; margin-top: 40px; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--body) }
+.signature::before, .signature::after { content: ''; width: 44px; height: 1px; background: var(--ochre) }
+.manifesto .text-link { display: inline-block; margin-top: 28px; color: var(--forest) }
+
+/* Bloque 3 · Conservación: la foto emerge del crema como entre neblina y vuelve a fundirse abajo. */
+.conservation { position: relative; padding: 230px 0 250px; color: #fff; overflow: hidden; isolation: isolate; background: var(--paper); text-align: center }
+.conservation-photo { position: absolute; inset: -12% 0; z-index: -2; background: url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0057-Paris-C-Oct-2016_edit.jpg') center / cover; will-change: transform }
+.conservation::before { content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(180deg, var(--paper) 0%, #f6f4ee00 26%, #f6f4ee00 74%, var(--paper) 100%),
+    radial-gradient(ellipse 60% 52% at 50% 50%, #0d221c8c, #0d221c40 70%, #0d221c1a) }
+.conservation .eyebrow { color: #f1d9a8; text-shadow: 0 1px 8px #0006 }
+.conservation h2 { max-width: 17ch; margin-inline: auto; font-size: clamp(40px, 4.8vw, 66px); text-shadow: 0 2px 24px #0005 }
+.conservation .lead2 { color: #eef3ef; max-width: 52ch; margin-inline: auto; text-shadow: 0 1px 12px #0007 }
+.glass-btn { display: inline-flex; align-items: center; gap: 10px; margin-top: 34px; min-height: 50px; padding: 12px 26px; border-radius: 999px; cursor: pointer;
+  font: 500 15px var(--sans); color: #fff; background: #ffffff1f; border: 1px solid #ffffff66; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transition: background .25s }
+.glass-btn:hover { background: #ffffff33 }
+.glass-btn svg { width: 14px; height: 14px; transition: transform .4s var(--ease) }
+.glass-btn[aria-expanded="true"] svg { transform: rotate(45deg) }
+.figures { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 900px; margin: 28px auto 0 }
+.figures[hidden] { display: none }
+.figures div { padding: 22px 12px; border-radius: 18px; background: #0d221c66; border: 1px solid #ffffff33; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  animation: figure-in 600ms var(--ease) both; animation-delay: var(--d, 0ms) }
+.figures strong { display: block; font: 500 clamp(34px, 3.4vw, 46px)/1 var(--serif); font-variant-numeric: tabular-nums }
+.figures span { display: block; margin-top: 8px; font-size: 13px; color: #d6e2dc }
+@keyframes figure-in { from { opacity: 0; transform: translateY(14px) scale(.97) } }
+
+/* Bloque 4 · Actividades: paneles que se expanden al pasar el mouse. */
+.activities { padding: 60px 0 130px; background: var(--paper) }
+.activities-head { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 44px }
+.activities-head h2 { margin: 12px 0 0; max-width: 16ch }
+.activities-head p { color: var(--body); max-width: 38ch }
+.act-gallery { display: flex; gap: 12px; height: 540px }
+.act { position: relative; flex: 1; min-width: 0; border-radius: 22px; overflow: hidden; color: #fff; cursor: pointer; isolation: isolate;
+  transition: flex-grow 750ms var(--ease); outline: none }
+.act.is-open { flex-grow: 4.2; cursor: default }
+.act-photo { position: absolute; inset: 0; z-index: -2; background: center / cover; transform: scale(1.12); transition: transform 1200ms var(--ease), filter 600ms }
+.act.is-open .act-photo { transform: scale(1) }
+.act:not(.is-open) .act-photo { filter: saturate(.7) brightness(.8) }
+.act::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #0b1f1a33, #0b1f1a1a 40%, #0b1f1ad9) }
+.act-num { position: absolute; top: 22px; left: 22px; font: 500 12px var(--sans); letter-spacing: .16em; opacity: .85 }
+.act-vertical { position: absolute; left: 50%; bottom: 30px; writing-mode: vertical-rl; transform: translateX(-50%) rotate(180deg); font: 400 24px var(--serif); white-space: nowrap; transition: opacity 400ms }
+.act.is-open .act-vertical { opacity: 0 }
+.act:focus-visible { box-shadow: 0 0 0 3px var(--ochre) }
+.act-body { position: absolute; left: 34px; right: 34px; bottom: 32px; opacity: 0; transform: translateY(18px); transition: opacity 400ms, transform 600ms var(--ease); pointer-events: none }
+.act.is-open .act-body { opacity: 1; transform: none; transition-delay: 280ms; pointer-events: auto }
+.act-body h3 { font-size: clamp(30px, 3vw, 44px); line-height: 1.05 }
+.act-body p { margin-top: 12px; max-width: 42ch; color: #e1ebe6; font-size: 16px }
+.act-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px }
+.act-tags span { padding: 6px 12px; border-radius: 999px; font-size: 12.5px; background: #ffffff1f; border: 1px solid #ffffff40; backdrop-filter: blur(8px) }
+.act-body .text-link { display: inline-block; margin-top: 20px; color: #fff }
+.act-progress { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: #e9c98f }
+.act.is-open .act-progress.run { animation: act-progress var(--cycle, 6000ms) linear forwards }
+@keyframes act-progress { to { width: 100% } }
+
+/* Fondo continuo para el resto de la página: el crema se oscurece y aclara sin líneas. */
+.flow-soft { background: linear-gradient(180deg, var(--paper), var(--soft) 18%, var(--soft) 82%, var(--paper)) }
+.center-head { text-align: center; max-width: 720px; margin: 0 auto 52px }
+.center-head h2 { margin-inline: auto }
+.center-head p { color: var(--body); font-size: 18px; margin-top: 6px }
+
+/* Bloque 5 · Tarifas como carta: nombre, línea de puntos, precio. */
+.prices { padding: 120px 0 }
+.price-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; max-width: 1040px; margin: 0 auto }
+.price-list { padding: 34px 38px; border-radius: 24px; background: #fffdf8cc; border: 1px solid #16302a14 }
+.price-list h3 { font-size: 26px; margin-bottom: 14px }
+.price-row { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; gap: 12px; padding: 13px 0 }
+.price-row + .price-row { border-top: 1px solid #16302a0f }
+.price-row .name { font-weight: 500 }
+.price-row small { display: block; font-size: 13px; color: var(--body); font-weight: 400 }
+.price-row .dots { border-bottom: 1.5px dotted #16302a40; transform: translateY(-5px) }
+.price-row .amount { font: 500 24px var(--serif); color: var(--forest); white-space: nowrap }
+.price-row .amount em { font: 400 13px var(--sans); font-style: normal; color: var(--body) }
+.price-note { margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: #b8863b14; color: #6d5422; font-size: 14px }
+.prices-cta { display: flex; gap: 28px; justify-content: center; align-items: center; margin-top: 44px }
+.prices-cta .text-link { color: var(--forest) }
+
+/* Bloque 6 · Reservador: tres decisiones y el total al instante. */
+.booking-sec { padding: 110px 0 120px }
+.booker { max-width: 860px; margin: 0 auto; padding: 38px; border-radius: 28px; background: #fff; border: 1px solid #16302a12; box-shadow: 0 30px 70px -40px #1f4a3d59 }
+.bk-label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ochre); margin-bottom: 14px }
+.bk-block + .bk-block { margin-top: 30px; padding-top: 30px; border-top: 1px solid #16302a0f }
+.days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin }
+.day { flex: 0 0 74px; padding: 12px 0; border-radius: 16px; border: 1px solid #16302a1f; background: var(--paper); text-align: center; cursor: pointer; font: inherit; color: var(--ink); transition: background .2s, border-color .2s, transform .2s }
+.day:hover:not(:disabled) { border-color: var(--forest); transform: translateY(-2px) }
+.day b { display: block; font: 500 26px/1 var(--serif); margin: 4px 0 }
+.day span { display: block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--body) }
+.day[aria-pressed="true"] { background: var(--forest); border-color: var(--forest); color: #fff }
+.day[aria-pressed="true"] span { color: #cfe0d8 }
+.day:disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through }
+.counters { display: flex; flex-wrap: wrap; gap: 18px 40px; align-items: center }
+.counter { display: flex; align-items: center; gap: 14px }
+.counter > span { min-width: 120px } .counter small { display: block; font-size: 12px; color: var(--body) }
+.counter button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #16302a2e; background: #fff; font-size: 20px; line-height: 1; cursor: pointer; color: var(--forest) }
+.counter button:hover { background: var(--paper) }
+.counter output { min-width: 22px; text-align: center; font: 500 24px var(--serif) }
+.check { display: inline-flex; gap: 10px; align-items: center; font-size: 14px; color: var(--body); cursor: pointer }
+.check input { width: 18px; height: 18px; accent-color: var(--forest) }
+.stay { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px }
+.stay button { padding: 14px 10px; border-radius: 14px; border: 1px solid #16302a1f; background: var(--paper); cursor: pointer; font: inherit; color: var(--ink); text-align: center; transition: background .2s, border-color .2s }
+.stay button small { display: block; font-size: 12px; color: var(--body); margin-top: 2px }
+.stay button[aria-pressed="true"] { background: #1f4a3d12; border-color: var(--forest); box-shadow: inset 0 0 0 1px var(--forest) }
+.nights { display: flex; align-items: center; gap: 14px; margin-top: 16px }
+.nights[hidden] { display: none }
+.bk-total { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-top: 30px; padding: 24px 28px; border-radius: 20px; background: var(--paper) }
+.bk-total strong { display: block; font: 500 40px/1 var(--serif); color: var(--forest); font-variant-numeric: tabular-nums }
+.bk-total small { color: var(--body); font-size: 13px }
+.bk-foot { text-align: center; margin-top: 16px; font-size: 13px; color: var(--body) }
+
+/* Bloque 7 · Reglas: aviso serio, sin íconos; drones en un recuadro destacado. */
+.rulebook { padding: 120px 0 }
+.drone-alert { display: grid; grid-template-columns: auto 1fr; gap: 22px; align-items: start; max-width: 900px; margin: 0 auto 34px; padding: 26px 30px; border-radius: 20px;
+  background: #fff7e8; border: 1px solid #b8863b66; border-left: 6px solid var(--ochre) }
+.drone-alert .mark { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--ochre); color: #fff; font: 600 22px var(--serif) }
+.drone-alert h3 { font-size: 26px; line-height: 1.15 }
+.drone-alert p { margin-top: 6px; color: #5d4a22; font-size: 16px }
+.drone-alert b { color: #3e2f12 }
+.rule-list { list-style: none; margin: 0 auto; padding: 0; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 48px }
+.rule-list li { display: grid; grid-template-columns: 46px 1fr; gap: 6px; padding: 22px 0; border-top: 1px solid #16302a1a }
+.rule-list li > span { font: 500 22px var(--serif); color: var(--ochre) }
+.rule-list b { display: block; font-size: 17px }
+.rule-list p { color: var(--body); font-size: 15px; margin-top: 2px }
+.rulebook .rules-more { text-align: center; margin-top: 30px }
+.rulebook .rules-more a { color: var(--forest) }
+
+/* Bloque 8 · Noticias: pila de fotos que rota sola; al pasar el mouse se abre en abanico. */
+.news { padding: 120px 0 140px; overflow: hidden }
+.news-layout { display: grid; grid-template-columns: .9fr 1.1fr; gap: 70px; align-items: center }
+.news-info .eyebrow { color: var(--ochre) }
+.news-current { margin-top: 26px; min-height: 190px }
+.news-current time { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--body) }
+.news-current h3 { font-size: clamp(28px, 2.6vw, 36px); line-height: 1.15; margin: 8px 0 10px }
+.news-current p { color: var(--body) }
+.news-current.swap { animation: news-swap 500ms var(--ease) }
+@keyframes news-swap { from { opacity: 0; transform: translateY(10px) } }
+.news-controls { display: flex; align-items: center; gap: 14px; margin-top: 26px }
+.news-controls button { width: 46px; height: 46px; border-radius: 50%; border: 1px solid #16302a2e; background: #fff; cursor: pointer; color: var(--forest); font-size: 18px; transition: background .2s }
+.news-controls button:hover { background: var(--forest); color: #fff }
+.news-count { font: 500 15px var(--sans); color: var(--body); font-variant-numeric: tabular-nums; margin-left: 6px }
+.news-stack { position: relative; height: 470px }
+.news-card { position: absolute; inset: 0 60px 30px 30px; border-radius: 22px; overflow: hidden; background: #2b3a36 center / cover; color: #fff; cursor: pointer;
+  box-shadow: 0 24px 50px -28px #0b1f1a99; transition: transform 800ms var(--ease), opacity 600ms, filter 600ms; transform-origin: 50% 110% }
+.news-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, #0b1f1acc) }
+.news-card span { position: absolute; left: 22px; bottom: 18px; z-index: 1; font-size: 12px; letter-spacing: .14em; text-transform: uppercase }
+.news-card.leaving { transform: translate(-70%, 30px) rotate(-14deg) !important; opacity: 0 }
+
+@media (max-width: 900px) {
+  .price-cols, .rule-list, .news-layout { grid-template-columns: 1fr }
+  .price-list { padding: 26px 22px }
+  .stay { grid-template-columns: 1fr 1fr }
+  .booker { padding: 24px 18px }
+  .bk-total { flex-direction: column; align-items: stretch; text-align: center }
+  .figures { grid-template-columns: 1fr 1fr }
+  .news-stack { height: 380px } .news-card { inset: 0 34px 26px 10px }
+  .conservation { padding: 170px 0 190px }
+}
+
+
+@media (max-width: 900px) {
+  .status { margin-top: -60px; background: linear-gradient(180deg, transparent 60px, var(--paper) 60px) }
+  .status-card { grid-template-columns: 1fr; gap: 22px; padding: 24px }
+  .status-facts { justify-content: flex-start; flex-wrap: wrap; gap: 14px 0 }
+  .status-facts div:first-child { padding-left: 0 }
+  .hero .hero-caption { bottom: 84px } .hero .hero-motion-toggle { bottom: 76px }
+  .activities-head { flex-direction: column; align-items: start }
+  .act-gallery { height: auto; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px }
+  .act, .act.is-open { flex: 0 0 82%; height: 460px; scroll-snap-align: center }
+  .act .act-body { opacity: 1; transform: none; pointer-events: auto } .act-vertical { display: none }
+  .act .act-photo { transform: none; filter: none }
+}
+
+@media (max-width: 900px) {
+  .wrap, .nav-inner { width: calc(100% - 40px) }
+  .nav-links, .nav-cta { display: none }
+  .menu-toggle { display: grid; margin-left: auto; width: 44px; height: 44px; place-items: center; border: 0; background: none; color: #fff; font-size: 22px }
+  .on-light .menu-toggle { color: var(--ink) }
+  .pillbar.nav-detached { top: 12px; width: calc(100% - 24px) }
+  .g2, .g3, .g4, .split, .booking, .stats, .sitemap { grid-template-columns: 1fr }
+  .rules { grid-template-columns: repeat(3, 1fr) }
+  .split { gap: 32px }
+  .hero-caption { left: 20px } .hero-motion-toggle { right: 20px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pillbar, .nav-inner, .brand-logo { transition: none } .pillbar.nav-releasing { animation: none }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .pillbar.nav-detached .glass-bg { background: #f4f5f3; backdrop-filter: none }
+}
+</style>
+</head>
+<body>
+
+<header class="pillbar nav-anchored" id="mainNav">
+  <span class="glass-bg" aria-hidden="true"></span>
+  <div class="nav-inner">
+    <a class="brand" href="#inicio" aria-label="Parque Andino Juncal, inicio">
+      <span class="brand-logo" id="navLogo"></span>
+    </a>
+    <nav class="nav-links" aria-label="Principal">
+      <details class="nav-dropdown"><summary>El Parque<span class="nav-chevron"></span></summary><div class="nav-dropdown-panel"><a href="#parque">Historia</a><a href="#conservacion">Conservación</a><a href="#noticias">Noticias y prensa</a></div></details>
+      <details class="nav-dropdown"><summary>Visita<span class="nav-chevron"></span></summary><div class="nav-dropdown-panel"><a href="#tarifas">Tarifas</a><a href="#reglas">Antes de venir</a><a href="#faq">Preguntas frecuentes</a><a href="#llegar">Cómo llegar</a></div></details>
+      <a href="#actividades">Actividades</a>
+      <details class="nav-dropdown"><summary>Apoya<span class="nav-chevron"></span></summary><div class="nav-dropdown-panel"><a href="#apoya">Donación</a><a href="#apoya">Voluntariado</a></div></details>
+    </nav>
+    <a href="#reservar" class="nav-cta" data-magnetic><span class="magnetic-label">Reservar visita</span></a>
+    <button class="menu-toggle" aria-label="Menú">☰</button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="hero-photo is-first" data-caption="Valle del Juncal" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/homecrop.jpg')"></div>
+  <div class="hero-photo" data-caption="Cordillera de los Andes centrales" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0094-Paris-C-Oct-2016_v3.jpg')"></div>
+  <div class="hero-photo" data-caption="Humedales altoandinos" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0057-Paris-C-Oct-2016_edit.jpg')"></div>
+  <div class="hero-photo" data-caption="Camino al glaciar" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0083-Paris-C-Oct-2016_edit.jpg')"></div>
+  <div class="hero-wash"></div>
+  <div class="hero-content">
+    <p class="eyebrow">Área Protegida Privada · Sitio Ramsar</p>
+    <h1>Al pie del Glaciar Juncal</h1>
+    <p class="lead">13.796 hectáreas de cordillera, glaciares y humedales en la cabecera del río Aconcagua. Conservadas desde 1911.</p>
+    <div class="hero-actions">
+      <a class="button" href="#reservar" data-magnetic><span class="magnetic-label">Reservar visita</span></a>
+      <a class="text-link" href="#parque">Conoce el parque</a>
+    </div>
+  </div>
+  <div class="hero-caption"><div class="hero-dots"></div><span id="caption">Valle del Juncal</span></div>
+  <button class="hero-motion-toggle" type="button" aria-pressed="false" aria-label="Pausar movimiento">
+    <svg class="pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+    <svg class="play" viewBox="0 0 24 24"><path d="M8 5.5a.8.8 0 0 1 1.2-.7l10 6.5a.8.8 0 0 1 0 1.4l-10 6.5a.8.8 0 0 1-1.2-.7z"/></svg>
+  </button>
+</section>
+
+<!-- 1. Estado del parque: monta el borde del hero -->
+<section class="status" aria-label="Estado del parque">
+  <div class="wrap">
+    <div class="status-card" data-reveal>
+      <div>
+        <p class="status-title">Temporada 2026–2027</p>
+        <p class="status-sub">Viernes a domingo solo con reserva previa.</p>
+      </div>
+      <div class="status-facts">
+        <div><b>12°</b><span>Los Hornitos, ahora</span></div>
+        <div class="warn"><b>Caudal alto</b><span>Estero Monos de Agua</span></div>
+        <div><b>08:30–18:00</b><span>Horario de ingreso</span></div>
+      </div>
+      <a class="button dark" href="#reservar" data-magnetic><span class="magnetic-label">Reservar</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 2. El parque: manifiesto centrado -->
+<section class="manifesto" id="parque">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>El parque</p>
+    <h2 data-reveal style="--d:80ms">Un proyecto de <em>conservación</em> y turismo <em>sustentable</em>.</h2>
+    <p data-reveal style="--d:160ms">Desde 1911 la familia Kenrick cuida estas 13.796 hectáreas: del río Juncal a la frontera con Argentina, del Estero de los Monos de Agua a la pirca de piedra que marca la entrada. Un Área Protegida Privada abierta a quienes vienen a conocerla con respeto.</p>
+    <p class="signature" data-reveal style="--d:240ms">Comunidad Kenrick Lyon · desde 1911</p><br>
+    <a class="text-link" href="#" data-reveal style="--d:300ms">Nuestra historia →</a>
+  </div>
+</section>
+
+<!-- 3. Conservación: la foto emerge entre neblina; las cifras se abren con un botón -->
+<section class="conservation" id="conservacion">
+  <div class="conservation-photo" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow" data-reveal>Conservación y biodiversidad</p>
+    <h2 data-reveal style="--d:80ms">Agua prístina para la cuenca del Aconcagua.</h2>
+    <p class="lead2" data-reveal style="--d:160ms">El parque abarca dos tercios de la cuenca del río Juncal, al pie del glaciar. Sus humedales le valieron la protección Ramsar en 2010.</p>
+    <button class="glass-btn" type="button" aria-expanded="false" aria-controls="figures" data-reveal style="--d:240ms">
+      Ver el parque en cifras
+      <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="figures" id="figures" hidden>
+      <div><strong data-count="13796">13.796</strong><span>hectáreas protegidas</span></div>
+      <div style="--d:80ms"><strong data-count="24" data-prefix="~">~24</strong><span>glaciares</span></div>
+      <div style="--d:160ms"><strong data-count="6" data-suffix="+">6+</strong><span>humedales de importancia</span></div>
+      <div style="--d:240ms"><strong>2010</strong><span>sitio Ramsar</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Actividades: galería expandible -->
+<section class="activities" id="actividades">
+  <div class="wrap">
+    <div class="activities-head">
+      <div><p class="eyebrow" data-reveal>Qué hacer</p><h2 data-reveal style="--d:80ms">Seis maneras de vivir el Juncal.</h2></div>
+      <p data-reveal style="--d:160ms">Pasa el mouse por cada una. Todas se viven dentro del parque, con guardaparques que conocen cada sendero.</p>
+    </div>
+    <div class="act-gallery" data-reveal style="--d:200ms">
+      <article class="act is-open" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0083-Paris-C-Oct-2016_edit.jpg')"></div>
+        <span class="act-num">01</span><span class="act-vertical">Senderismo</span>
+        <div class="act-body"><h3>Senderismo</h3><p>Rutas al Glaciar Juncal y a los humedales, entre guanacos y cóndores.</p><div class="act-tags"><span>Fácil a exigente</span><span>2 a 8 horas</span></div><a class="text-link" href="#">Ver rutas →</a></div>
+        <span class="act-progress"></span>
+      </article>
+      <article class="act" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/homecrop.jpg');background-position:30% center"></div>
+        <span class="act-num">02</span><span class="act-vertical">Camping</span>
+        <div class="act-body"><h3>Camping y refugio</h3><p>Los Hornitos junto a la entrada, Las Morrenas a 7 km o el Refugio del Arriero.</p><div class="act-tags"><span>Desde $2.500</span><span>Reserva online</span></div><a class="text-link" href="#reservar">Reservar →</a></div>
+        <span class="act-progress"></span>
+      </article>
+      <article class="act" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0057-Paris-C-Oct-2016_edit.jpg')"></div>
+        <span class="act-num">03</span><span class="act-vertical">Flora y fauna</span>
+        <div class="act-body"><h3>Flora y fauna</h3><p>Vegas altoandinas, el chorlito cordillerano, guanacos y el vuelo del cóndor.</p><div class="act-tags"><span>Guía de avistamiento</span><span>Todo el año</span></div><a class="text-link" href="#">Qué ver →</a></div>
+        <span class="act-progress"></span>
+      </article>
+      <article class="act" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0094-Paris-C-Oct-2016_v3.jpg')"></div>
+        <span class="act-num">04</span><span class="act-vertical">Fotografía</span>
+        <div class="act-body"><h3>Fotografía</h3><p>Amaneceres sobre el glaciar y cielos limpios para fotografía nocturna.</p><div class="act-tags"><span>Puntos recomendados</span><span>Permisos comerciales</span></div><a class="text-link" href="#">Ver puntos →</a></div>
+        <span class="act-progress"></span>
+      </article>
+      <article class="act" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/DSC_0094-Paris-C-Oct-2016_v3.jpg');background-position:80% 20%"></div>
+        <span class="act-num">05</span><span class="act-vertical">Montañismo</span>
+        <div class="act-body"><h3>Montañismo</h3><p>Ascensos en la cordillera central, con registro previo ante los guardaparques.</p><div class="act-tags"><span>Experiencia requerida</span><span>Registro obligatorio</span></div><a class="text-link" href="#">Antes de subir →</a></div>
+        <span class="act-progress"></span>
+      </article>
+      <article class="act" tabindex="0">
+        <div class="act-photo" style="background-image:url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/homecrop.jpg');background-position:85% center"></div>
+        <span class="act-num">06</span><span class="act-vertical">Educación</span>
+        <div class="act-body"><h3>Educación ambiental</h3><p>Visitas para colegios y talleres sobre glaciares, agua y conservación.</p><div class="act-tags"><span>Grupos y colegios</span><span>Con guía</span></div><a class="text-link" href="#">Agendar visita →</a></div>
+        <span class="act-progress"></span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Tarifas: carta legible -->
+<section class="prices flow-soft" id="tarifas">
+  <div class="wrap">
+    <div class="center-head">
+      <p class="eyebrow" data-reveal>Visita</p>
+      <h2 data-reveal style="--d:80ms">Tarifas 2026–2027</h2>
+      <p data-reveal style="--d:140ms">Precios por persona. La entrada al parque se paga aparte del alojamiento.</p>
+    </div>
+    <div class="price-cols">
+      <div class="price-list" data-reveal>
+        <h3>Entrada por el día</h3>
+        <div class="price-row"><span class="name">Adulto</span><span class="dots"></span><span class="amount">$8.000</span></div>
+        <div class="price-row"><span class="name">Niño<small>hasta 12 años</small></span><span class="dots"></span><span class="amount">$4.000</span></div>
+        <p class="price-note"><b>Residentes de San Felipe y Los Andes:</b> 25% de descuento en la entrada adulto, mostrando un comprobante de domicilio al llegar.</p>
+      </div>
+      <div class="price-list" data-reveal style="--d:100ms">
+        <h3>Pernoctar</h3>
+        <div class="price-row"><span class="name">Camping Los Hornitos<small>en la entrada · con fogones</small></span><span class="dots"></span><span class="amount">$5.000 <em>/ noche</em></span></div>
+        <div class="price-row"><span class="name">Camping Las Morrenas<small>a 7 km de la entrada</small></span><span class="dots"></span><span class="amount">$3.500 <em>/ noche</em></span></div>
+        <div class="price-row"><span class="name">Camping niños<small>hasta 12 años</small></span><span class="dots"></span><span class="amount">$2.500 <em>/ noche</em></span></div>
+        <div class="price-row"><span class="name">Backcountry<small>zonas no habilitadas</small></span><span class="dots"></span><span class="amount">$2.000 <em>/ noche</em></span></div>
+        <div class="price-row"><span class="name">Refugio del Arriero<small>habitación hasta 3 personas · cocina equipada</small></span><span class="dots"></span><span class="amount">$50.000</span></div>
+      </div>
+    </div>
+    <div class="prices-cta" data-reveal>
+      <a class="button dark" href="#reservar" data-magnetic><span class="magnetic-label">Reservar visita</span></a>
+      <a class="text-link" href="#">Tarifas para empresas</a>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Reserva: tres decisiones y el total al instante -->
+<section class="booking-sec" id="reservar">
+  <div class="wrap">
+    <div class="center-head">
+      <p class="eyebrow" data-reveal>Reservar</p>
+      <h2 data-reveal style="--d:80ms">Reserva tu visita</h2>
+      <p data-reveal style="--d:140ms">Elige el día, cuántos vienen y si se quedan a dormir.</p>
+    </div>
+    <form class="booker" data-reveal style="--d:180ms" onsubmit="return false">
+      <div class="bk-block">
+        <span class="bk-label">Día</span>
+        <div class="days" id="bkDays"></div>
+      </div>
+      <div class="bk-block">
+        <span class="bk-label">Visitantes</span>
+        <div class="counters">
+          <div class="counter"><span>Adultos</span><button type="button" data-step="adults:-1" aria-label="Menos adultos">−</button><output id="bkAdults">2</output><button type="button" data-step="adults:1" aria-label="Más adultos">+</button></div>
+          <div class="counter"><span>Niños<small>hasta 12 años</small></span><button type="button" data-step="kids:-1" aria-label="Menos niños">−</button><output id="bkKids">0</output><button type="button" data-step="kids:1" aria-label="Más niños">+</button></div>
+          <label class="check"><input type="checkbox" id="bkResident"> Somos residentes de San Felipe o Los Andes</label>
+        </div>
+      </div>
+      <div class="bk-block">
+        <span class="bk-label">¿Se quedan a dormir?</span>
+        <div class="stay" id="bkStay">
+          <button type="button" data-stay="day" aria-pressed="true">Solo el día<small>Sin alojamiento</small></button>
+          <button type="button" data-stay="hornitos">Los Hornitos<small>Camping</small></button>
+          <button type="button" data-stay="morrenas">Las Morrenas<small>Camping</small></button>
+          <button type="button" data-stay="refugio">Refugio<small>Habitación</small></button>
+        </div>
+        <div class="nights counter" id="bkNights" hidden><span>Noches</span><button type="button" data-step="nights:-1" aria-label="Menos noches">−</button><output id="bkNightsOut">1</output><button type="button" data-step="nights:1" aria-label="Más noches">+</button></div>
+      </div>
+      <div class="bk-total">
+        <div><small id="bkSummary">2 adultos · solo el día</small><strong id="bkTotal">$16.000</strong></div>
+        <button class="button dark" type="submit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
+      </div>
+      <p class="bk-foot">Pago con Webpay o Mercado Pago. Tu entrada llega al correo con un código QR.</p>
+    </form>
+  </div>
+</section>
+
+<!-- 7. Reglas: aviso serio -->
+<section class="rulebook flow-soft" id="reglas">
+  <div class="wrap">
+    <div class="center-head">
+      <p class="eyebrow" data-reveal>Antes de venir</p>
+      <h2 data-reveal style="--d:80ms">Reglas del parque</h2>
+      <p data-reveal style="--d:140ms">Este es un ecosistema frágil. Al ingresar aceptas estas normas; no cumplirlas es motivo de expulsión del parque.</p>
+    </div>
+    <div class="drone-alert" role="note" data-reveal>
+      <span class="mark" aria-hidden="true">!</span>
+      <div>
+        <h3>Drones y filmación comercial: prohibidos</h3>
+        <p>Solo se autorizan <b>de forma excepcional</b>, con un <b>permiso especial de la Administración</b> solicitado con anticipación a info@parqueandinojuncal.cl. Sin ese permiso no se permite su uso en ningún sector del parque.</p>
+      </div>
+    </div>
+    <ol class="rule-list">
+      <li data-reveal><span>01</span><div><b>No pises vegas ni humedales</b><p>Son extremadamente frágiles. Pisarlos es causa de expulsión.</p></div></li>
+      <li data-reveal style="--d:60ms"><span>02</span><div><b>Fuego solo en Los Hornitos</b><p>Trae tu propia leña. En el resto del parque está prohibido.</p></div></li>
+      <li data-reveal><span>03</span><div><b>Sin mascotas</b><p>Son una amenaza para la fauna nativa.</p></div></li>
+      <li data-reveal style="--d:60ms"><span>04</span><div><b>Llévate tu basura</b><p>Incluido el papel higiénico. No la quemes ni la entierres.</p></div></li>
+      <li data-reveal><span>05</span><div><b>Sin caza, pesca ni armas</b><p>Protegemos la fauna, las aves y los peces del parque.</p></div></li>
+      <li data-reveal style="--d:60ms"><span>06</span><div><b>Registra tu ficha</b><p>Avisa tu itinerario a los guardaparques y despídete al salir.</p></div></li>
+    </ol>
+    <p class="rules-more"><a class="text-link" href="#">Reglamento completo y recomendaciones →</a></p>
+  </div>
+</section>
+
+<!-- 8. Noticias: pila que rota -->
+<section class="news" id="noticias">
+  <div class="wrap news-layout">
+    <div class="news-info">
+      <p class="eyebrow" data-reveal>Noticias</p>
+      <h2 data-reveal style="--d:80ms">Desde el parque</h2>
+      <div class="news-current" id="newsCurrent" aria-live="polite"></div>
+      <div class="news-controls">
+        <button type="button" id="newsPrev" aria-label="Noticia anterior">←</button>
+        <button type="button" id="newsNext" aria-label="Noticia siguiente">→</button>
+        <span class="news-count" id="newsCount"></span>
+      </div>
+    </div>
+    <div class="news-stack" id="newsStack" data-reveal style="--d:120ms"></div>
+  </div>
+</section>
+
+<!-- 9. Apoya -->
+<section class="section dark" id="apoya">
+  <div class="wrap split">
+    <div><span class="note"><b>Bloque 9</b> Apoya · donación con pago online + voluntariado</span>
+      <p class="eyebrow" style="color:#e9c98f">Apoya</p>
+      <h2>Conservar cuesta. Tú puedes ayudar.</h2>
+      <p class="lead2">Donaciones únicas o mensuales, y un programa de voluntariado por temporada.</p>
+      <div class="hero-actions" style="justify-content:flex-start"><a class="button" href="#">Donar</a><a class="text-link" href="#">Ser voluntario</a></div></div>
+    <div class="ph" style="background:repeating-linear-gradient(45deg,#2a5848 0 10px,#24503f 10px 20px);color:#9fbfb1">Foto · guardaparques / voluntarios</div>
+  </div>
+</section>
+
+<!-- 10. FAQ + Contacto -->
+<section class="section" id="faq">
+  <div class="wrap split" style="align-items:start">
+    <div><span class="note"><b>Bloque 10</b> Preguntas frecuentes en acordeón</span>
+      <h2>Preguntas frecuentes</h2>
+      <div class="grid" style="margin-top:20px;gap:10px">
+        <div class="box" style="padding:16px 20px">¿Necesito reservar entre semana? <span style="float:right">+</span></div>
+        <div class="box" style="padding:16px 20px">¿Puedo llegar en auto bajo? <span style="float:right">+</span></div>
+        <div class="box" style="padding:16px 20px">¿Cuándo crece el estero? <span style="float:right">+</span></div>
+      </div></div>
+    <div id="llegar"><span class="note"><b>Bloque 11</b> Cómo llegar (mapa) + contacto</span>
+      <div class="ph" style="aspect-ratio:16/10">Mapa · Ruta 60, km 58</div>
+      <p style="margin-top:14px;color:var(--body)">info@parqueandinojuncal.cl · Instagram · Facebook</p></div>
+  </div>
+</section>
+
+<!-- Estructura -->
+<section class="section dark" id="estructura">
+  <div class="wrap">
+    <span class="note"><b>Para el cliente</b> Mapa del sitio propuesto · en dorado lo nuevo</span>
+    <h2>Estructura del sitio</h2>
+    <div class="sitemap">
+      <div><h3>El Parque</h3><ul><li>Historia y familia</li><li>Conservación</li><li>Noticias</li><li>En la prensa</li></ul></div>
+      <div><h3>Visita</h3><ul><li>Tarifas</li><li>Antes de venir</li><li>Preguntas frecuentes</li><li>Cómo llegar</li><li class="new">Estado del parque</li></ul></div>
+      <div><h3>Actividades</h3><ul><li>Senderismo</li><li>Camping y refugio</li><li>Flora y fauna</li><li>Montañismo</li><li>Educación ambiental</li></ul></div>
+      <div><h3>Apoya</h3><ul><li class="new">Donación online</li><li>Voluntariado</li></ul></div>
+      <div><h3 class="new">Reservar</h3><ul><li class="new">Reserva + pago</li><li class="new">Mi reserva (QR)</li><li class="new">Panel del parque: cupos, check-in, ventas</li></ul></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">Maqueta conceptual · Parque Andino Juncal · fotos actuales del sitio, solo referenciales</div></footer>
+
+<script src="assets/logo-juncal-data.js"></script>
+<script src="assets/ave-juncal.js"></script>
+<script>
+// Barra: misma histéresis que MZ (se separa a 72px, vuelve bajo 24px).
+(() => {
+  const nav = document.getElementById('mainNav'), hero = document.querySelector('.hero');
+  const motion = matchMedia('(prefers-reduced-motion: reduce)');
+  let detached = scrollY > 72, frame = null;
+  nav.classList.toggle('nav-detached', detached);
+  function update() {
+    frame = null;
+    nav.classList.toggle('on-light', hero.getBoundingClientRect().bottom < 50);
+    const next = detached ? scrollY > 24 : scrollY > 72;
+    if (next === detached) return;
+    detached = next;
+    nav.classList.toggle('nav-detached', detached);
+    nav.classList.toggle('nav-releasing', detached && !motion.matches);
+  }
+  addEventListener('scroll', () => { if (frame === null) frame = requestAnimationFrame(update); }, { passive: true });
+  nav.addEventListener('animationend', e => { if (e.animationName === 'nav-release') nav.classList.remove('nav-releasing'); });
+  update();
+})();
+
+// Menús: se abren al pasar el mouse y nunca hay dos abiertos a la vez. El teclado y el toque siguen usando clic.
+(() => {
+  const menus = [...document.querySelectorAll('.nav-dropdown')];
+  const hover = matchMedia('(hover: hover) and (pointer: fine)');
+  let closing = null;
+  const closeOthers = keep => menus.forEach(m => { if (m !== keep) m.open = false; });
+  menus.forEach(menu => {
+    menu.addEventListener('toggle', () => { if (menu.open) closeOthers(menu); });
+    menu.addEventListener('pointerenter', () => {
+      if (!hover.matches) return;
+      clearTimeout(closing);
+      menu.open = true;
+    });
+    menu.addEventListener('pointerleave', () => {
+      if (!hover.matches) return;
+      closing = setTimeout(() => { menu.open = false; }, 160);
+    });
+    // Con mouse, el clic no cierra un menú que ya abrió el hover (detail 0 = Enter o Espacio).
+    menu.querySelector('summary').addEventListener('click', e => { if (hover.matches && e.detail > 0) e.preventDefault(); });
+  });
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeOthers(null); });
+  addEventListener('click', e => { if (!e.target.closest('.nav-dropdown')) closeOthers(null); });
+})();
+
+// Botón magnético: dentro de un radio alrededor del botón, este se desplaza hacia el cursor y el texto un poco más.
+(() => {
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const reach = 36, pull = .28, labelPull = .16;
+  for (const el of document.querySelectorAll('[data-magnetic]')) {
+    const label = el.querySelector('.magnetic-label');
+    let active = false, offset = [0, 0];
+    addEventListener('pointermove', e => {
+      // Posición de reposo: el rectángulo actual menos el desplazamiento aplicado.
+      const b = el.getBoundingClientRect();
+      const r = { left: b.left - offset[0], right: b.right - offset[0], top: b.top - offset[1], bottom: b.bottom - offset[1] };
+      const inside = e.clientX > r.left - reach && e.clientX < r.right + reach && e.clientY > r.top - reach && e.clientY < r.bottom + reach;
+      if (!inside) {
+        if (active) { active = false; offset = [0, 0]; el.classList.remove('is-pulled'); el.style.transform = label.style.transform = ''; }
+        return;
+      }
+      active = true;
+      el.classList.add('is-pulled');
+      const dx = e.clientX - (r.left + r.right) / 2, dy = e.clientY - (r.top + r.bottom) / 2;
+      offset = [dx * pull, dy * pull];
+      el.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`;
+      label.style.transform = `translate(${dx * labelPull}px, ${dy * labelPull}px)`;
+    }, { passive: true });
+  }
+})();
+
+const clp = n => '$' + Math.round(n).toLocaleString('es-CL');
+
+// Cifras que cuentan desde cero (data-count, con data-prefix / data-suffix opcionales).
+function countUp(el) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const target = Number(el.dataset.count), prefix = el.dataset.prefix || '', suffix = el.dataset.suffix || '';
+  const start = performance.now(), duration = 1600;
+  (function step(now) {
+    const t = Math.min(1, (now - start) / duration), eased = 1 - (1 - t) ** 3;
+    el.textContent = prefix + Math.round(target * eased).toLocaleString('es-CL') + suffix;
+    if (t < 1) requestAnimationFrame(step);
+  })(start);
+}
+
+// Aparición al hacer scroll: una sola vez por elemento.
+(() => {
+  const seen = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.add('is-in');
+    entry.target.querySelectorAll('[data-count]').forEach(countUp);
+    seen.unobserve(entry.target);
+  }), { threshold: .2, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(el => seen.observe(el));
+})();
+
+// Conservación: el botón abre y cierra las cifras; cuentan cada vez que se abren.
+(() => {
+  const button = document.querySelector('.glass-btn[aria-controls="figures"]'), panel = document.getElementById('figures');
+  if (!button) return;
+  button.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') !== 'true';
+    button.setAttribute('aria-expanded', open);
+    panel.hidden = !open;
+    if (open) panel.querySelectorAll('[data-count]').forEach(countUp);
+  });
+})();
+
+// Reservador: elige día, visitantes y alojamiento; el total se recalcula al instante con las tarifas 2026–2027.
+(() => {
+  const form = document.querySelector('.booker');
+  if (!form) return;
+  const state = { adults: 2, kids: 0, nights: 1, stay: 'day', resident: false, day: null };
+  const limits = { adults: [1, 12], kids: [0, 12], nights: [1, 7] };
+  const names = { day: 'solo el día', hornitos: 'Camping Los Hornitos', morrenas: 'Camping Las Morrenas', refugio: 'Refugio del Arriero' };
+  const weekday = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'], month = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+  // Próximos 14 días; dos marcados como llenos solo para la maqueta.
+  const days = document.getElementById('bkDays');
+  const today = new Date();
+  for (let i = 1; i <= 14; i++) {
+    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'day';
+    b.innerHTML = `<span>${weekday[d.getDay()]}</span><b>${d.getDate()}</b><span>${month[d.getMonth()]}</span>`;
+    b.disabled = i === 5 || i === 12;
+    if (b.disabled) b.title = 'Sin cupo';
+    b.addEventListener('click', () => { state.day = d; days.querySelectorAll('.day').forEach(x => x.setAttribute('aria-pressed', x === b)); render(); });
+    days.append(b);
+  }
+  days.querySelector('.day:not(:disabled)').click();
+
+  form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
+    const [key, delta] = b.dataset.step.split(':');
+    const [min, max] = limits[key];
+    state[key] = Math.min(max, Math.max(min, state[key] + Number(delta)));
+    render();
+  }));
+  form.querySelectorAll('[data-stay]').forEach(b => b.addEventListener('click', () => {
+    state.stay = b.dataset.stay;
+    form.querySelectorAll('[data-stay]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    render();
+  }));
+  document.getElementById('bkResident').addEventListener('change', e => { state.resident = e.target.checked; render(); });
+
+  function render() {
+    const { adults, kids, nights, stay, resident } = state;
+    let total = adults * 8000 * (resident ? .75 : 1) + kids * 4000;
+    if (stay === 'hornitos') total += (adults * 5000 + kids * 2500) * nights;
+    if (stay === 'morrenas') total += (adults * 3500 + kids * 2500) * nights;
+    if (stay === 'refugio') total += Math.ceil((adults + kids) / 3) * 50000 * nights;
+    document.getElementById('bkAdults').textContent = adults;
+    document.getElementById('bkKids').textContent = kids;
+    document.getElementById('bkNightsOut').textContent = nights;
+    document.getElementById('bkNights').hidden = stay === 'day';
+    const people = `${adults} adulto${adults > 1 ? 's' : ''}` + (kids ? ` y ${kids} niño${kids > 1 ? 's' : ''}` : '');
+    const when = state.day ? `${weekday[state.day.getDay()]} ${state.day.getDate()} ${month[state.day.getMonth()]}` : '';
+    const sleep = stay === 'day' ? names.day : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;
+    document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}`;
+    document.getElementById('bkTotal').textContent = clp(total);
+  }
+  render();
+})();
+
+// Noticias: pila de 8 fotos que rota sola mientras se ve; con el mouse encima se abre en abanico y se detiene.
+(() => {
+  const stack = document.getElementById('newsStack');
+  if (!stack) return;
+  const photo = 'https://parqueandinojuncal.cl/wp-content/uploads/2017/02/';
+  const items = [
+    ['oct 2026', 'Abrimos la temporada 2026–2027', 'Desde este fin de semana el parque recibe visitas con reserva previa de viernes a domingo.', 'homecrop.jpg', 'center'],
+    ['sep 2026', 'Monitoreo del Glaciar Juncal', 'Guardaparques y voluntarios midieron el retroceso del frente glaciar durante el invierno.', 'DSC_0094-Paris-C-Oct-2016_v3.jpg', 'center'],
+    ['ago 2026', 'Voluntariado de invierno', 'Abrimos postulaciones para apoyar la mantención de senderos y refugios.', 'DSC_0083-Paris-C-Oct-2016_edit.jpg', 'center'],
+    ['jul 2026', 'Registro del chorlito cordillerano', 'Un nuevo avistamiento en las vegas altas confirma la importancia de cuidar los humedales.', 'DSC_0057-Paris-C-Oct-2016_edit.jpg', 'center'],
+    ['jun 2026', 'Nuevo tramo hacia Las Morrenas', 'Señalizamos un desvío que protege una vega en recuperación.', 'DSC_0083-Paris-C-Oct-2016_edit.jpg', '20% center'],
+    ['may 2026', 'Talleres para colegios del valle', 'Más de 300 estudiantes de Los Andes visitaron el parque este semestre.', 'homecrop.jpg', '80% center'],
+    ['abr 2026', 'Limpieza de humedales', 'Retiramos basura arrastrada por el estero junto a la comunidad.', 'DSC_0057-Paris-C-Oct-2016_edit.jpg', '30% 70%'],
+    ['mar 2026', 'El parque en la prensa', 'Un reportaje sobre conservación privada en los Andes centrales.', 'DSC_0094-Paris-C-Oct-2016_v3.jpg', '80% 20%']
+  ];
+  const cards = items.map(([date, , , file, pos], i) => {
+    const card = document.createElement('article');
+    card.className = 'news-card';
+    card.style.backgroundImage = `url('${photo}${file}')`;
+    card.style.backgroundPosition = pos;
+    card.innerHTML = `<span>${date}</span>`;
+    card.dataset.index = i;
+    stack.append(card);
+    return card;
+  });
+  let order = cards.map((_, i) => i), fanned = false, visible = false, timer = null, busy = false;
+  const info = document.getElementById('newsCurrent'), count = document.getElementById('newsCount');
+
+  function layout() {
+    order.forEach((index, depth) => {
+      const card = cards[index];
+      const t = fanned
+        ? `translate(${depth * 34}px, ${depth * -4}px) rotate(${depth * 5}deg)`
+        : `translate(${depth * 16}px, ${depth * -14}px) rotate(${depth * 2.4}deg) scale(${1 - depth * .045})`;
+      card.style.transform = t;
+      card.style.zIndex = 20 - depth;
+      card.style.opacity = depth > 4 ? 0 : 1;
+      card.style.filter = `brightness(${1 - Math.min(depth, 4) * .1})`;
+    });
+    const [date, title, text] = items[order[0]];
+    info.innerHTML = `<time>${date}</time><h3>${title}</h3><p>${text}</p><a class="text-link" href="#">Leer noticia →</a>`;
+    info.classList.remove('swap'); void info.offsetWidth; info.classList.add('swap');
+    count.textContent = `${String(order[0] + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+  }
+  function next() {
+    if (busy) return;
+    busy = true;
+    const top = cards[order[0]];
+    top.classList.add('leaving');
+    setTimeout(() => {
+      top.classList.remove('leaving');
+      order.push(order.shift());
+      layout();
+      busy = false;
+    }, 520);
+  }
+  function prev() { order.unshift(order.pop()); layout(); }
+  function schedule() {
+    clearInterval(timer);
+    if (visible && !fanned && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(next, 4200);
+  }
+  stack.addEventListener('pointerenter', () => { if (matchMedia('(hover: hover)').matches) { fanned = true; layout(); schedule(); } });
+  stack.addEventListener('pointerleave', () => { fanned = false; layout(); schedule(); });
+  stack.addEventListener('click', e => {
+    const card = e.target.closest('.news-card');
+    if (!card) return;
+    const i = Number(card.dataset.index);
+    if (i === order[0]) return next();
+    order = [...order.slice(order.indexOf(i)), ...order.slice(0, order.indexOf(i))];
+    layout();
+  });
+  document.getElementById('newsNext').addEventListener('click', () => { next(); schedule(); });
+  document.getElementById('newsPrev').addEventListener('click', () => { prev(); schedule(); });
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: .3 }).observe(stack);
+  layout();
+})();
+
+// Parallax suave de la foto de conservación (solo mientras la sección está en pantalla).
+(() => {
+  const section = document.querySelector('.conservation'), photo = section?.querySelector('.conservation-photo');
+  if (!photo || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let frame = null;
+  function update() {
+    frame = null;
+    const r = section.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    const progress = (innerHeight - r.top) / (innerHeight + r.height) - .5;
+    photo.style.transform = `translateY(${progress * -14}%)`;
+  }
+  addEventListener('scroll', () => { if (frame === null) frame = requestAnimationFrame(update); }, { passive: true });
+  update();
+})();
+
+// Actividades: el panel bajo el mouse (o con foco) se expande. Si nadie interactúa, avanzan solas cada 6 s mientras se ven.
+(() => {
+  const gallery = document.querySelector('.act-gallery');
+  if (!gallery) return;
+  const panels = [...gallery.querySelectorAll('.act')];
+  const cycle = 6000, auto = !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(min-width: 901px)').matches;
+  let current = 0, timer = null, visible = false, paused = false;
+  gallery.style.setProperty('--cycle', cycle + 'ms');
+  function open(i) {
+    current = i;
+    panels.forEach((p, k) => {
+      p.classList.toggle('is-open', k === i);
+      const bar = p.querySelector('.act-progress');
+      bar.classList.remove('run'); void bar.offsetWidth;
+      if (k === i && auto && visible && !paused) bar.classList.add('run');
+    });
+  }
+  function schedule() {
+    clearTimeout(timer);
+    if (!auto || !visible || paused) return;
+    timer = setTimeout(() => { open((current + 1) % panels.length); schedule(); }, cycle);
+  }
+  panels.forEach((panel, i) => {
+    panel.addEventListener('pointerenter', () => { if (matchMedia('(hover: hover)').matches) open(i); });
+    panel.addEventListener('focus', () => open(i));
+    panel.addEventListener('click', () => open(i));
+  });
+  gallery.addEventListener('pointerenter', () => { paused = true; schedule(); open(current); });
+  gallery.addEventListener('pointerleave', () => { paused = false; open(current); schedule(); });
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; open(current); schedule(); }, { threshold: .4 }).observe(gallery);
+})();
+
+// Logo: cada 12–17 s el pájaro despega cuadro a cuadro, sale de la pantalla, vuelve y se posa.
+(() => {
+  const brand = document.querySelector('.brand');
+  const bird = AveJuncal.logo(document.getElementById('navLogo'));
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let flying = false, timer = null;
+  async function fly() {
+    if (flying || document.hidden) return schedule();
+    flying = true;
+    await bird.play();
+    flying = false;
+    schedule();
+  }
+  function schedule(delay = 12000 + Math.random() * 5000) { clearTimeout(timer); timer = setTimeout(fly, delay); }
+  brand.addEventListener('mouseenter', () => { if (!flying) { clearTimeout(timer); fly(); } });
+  schedule(3000);
+})();
+
+// Hero: ritmo de MZ (6,5 s fija + 1,8 s de fundido, zoom 33 s), con pausa y leyenda.
+(() => {
+  const hero = document.querySelector('.hero');
+  const photos = [...hero.querySelectorAll('.hero-photo')];
+  const dots = hero.querySelector('.hero-dots'), caption = document.getElementById('caption');
+  const toggle = hero.querySelector('.hero-motion-toggle');
+  const hold = 6500, fade = 1800;
+  photos.forEach(() => dots.append(document.createElement('span')));
+  let index = 0, paused = false, timer = null;
+  const zooms = photos.map(p => p.animate([{ transform: 'scale(1.005)' }, { transform: 'scale(1.025)' }],
+    { duration: 33000, iterations: Infinity, direction: 'alternate', easing: 'ease-in-out' }));
+  function show(next) {
+    photos[index].animate([{ opacity: 1 }, { opacity: 0 }], { duration: fade, easing: 'ease-in-out', fill: 'forwards' });
+    photos[next].animate([{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: 'ease-in-out', fill: 'forwards' });
+    index = next;
+    caption.textContent = photos[index].dataset.caption;
+    [...dots.children].forEach((d, i) => d.classList.toggle('on', i === index));
+  }
+  function schedule() { clearTimeout(timer); if (!paused) timer = setTimeout(() => { show((index + 1) % photos.length); schedule(); }, hold + fade); }
+  dots.children[0].classList.add('on');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { zooms.forEach(a => a.cancel()); toggle.hidden = true; return; }
+  toggle.addEventListener('click', () => {
+    paused = !paused;
+    toggle.setAttribute('aria-pressed', paused);
+    zooms.forEach(a => paused ? a.pause() : a.play());
+    schedule();
+  });
+  schedule();
+})();
+</script>
+</body>
+</html>

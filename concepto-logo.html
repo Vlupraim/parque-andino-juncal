@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El pájaro del Juncal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap" rel="stylesheet">
+<style>
+:root { --ink: #16302a; --body: #55635e; --paper: #f6f4ee; --soft: #ebe8de; --line: #d8d3c4; --forest: #1f4a3d; --ochre: #b8863b; --glacier: #cfe3e6;
+  --sans: 'IBM Plex Sans', system-ui, sans-serif; --serif: 'Fraunces', Georgia, serif }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased }
+h1, h2, h3, p { margin: 0 } h1, h2, h3 { font-family: var(--serif); font-weight: 400 }
+.wrap { width: min(1100px, calc(100% - 64px)); margin-inline: auto }
+.eyebrow { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 500; color: var(--ochre) }
+
+/* Escenario: la foto del parque con el logo grande; el pájaro sale del cuadro y vuelve. */
+.stage { position: relative; height: min(78vh, 640px); min-height: 460px; overflow: hidden; color: #fff; isolation: isolate;
+  background: #2b3a36 url('https://parqueandinojuncal.cl/wp-content/uploads/2017/02/homecrop.jpg') center 40% / cover }
+.stage::before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, #0b1f1a8c, #0b1f1a40 45%, #0b1f1ab3) }
+.stage-inner { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px }
+.stage-header { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 36px; padding: 26px max(32px, calc((100% - 1100px) / 2)) }
+.stage-header nav { display: flex; gap: 30px; font-size: 15px; font-weight: 500 }
+.stage .eyebrow { color: var(--glacier); text-align: center }
+.logo { position: relative; height: 84px; aspect-ratio: 935.9 / 410.7; color: #fff }
+.logo-text { position: absolute; inset: 0; width: 100%; height: 100% }
+.ave-host { position: absolute }
+.ave { display: block; width: 100%; height: auto; fill: currentColor; overflow: visible }
+.ave .ave-eye { fill: var(--ave-eye) }
+.stage-controls { position: absolute; left: 0; right: 0; bottom: 24px; display: flex; justify-content: center; gap: 12px }
+.chip { min-height: 44px; padding: 10px 20px; border-radius: 999px; border: 1px solid #ffffff66; background: #ffffff14; color: #fff; font: 500 14px var(--sans);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: pointer; transition: background .2s }
+.chip:hover { background: #ffffff2b } .chip[aria-pressed="true"] { background: #fff; color: var(--forest) }
+
+.section { padding: 84px 0; border-top: 1px solid var(--line) }
+h2 { font-size: clamp(30px, 3.4vw, 46px); line-height: 1.12; letter-spacing: -.015em; margin: 12px 0 16px; text-wrap: balance }
+.lead { font-size: 18px; color: var(--body); max-width: 60ch }
+.frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; margin-top: 36px }
+.frame { border-radius: 14px; background: #fff; border: 1px solid var(--line); padding: 14px 10px 8px; text-align: center; color: #111; font-size: 12px }
+.frame .ave { width: 100%; height: auto; fill: currentColor; overflow: visible }
+.frame span { display: block; margin-top: 6px; color: var(--body) }
+.steps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 40px; counter-reset: s }
+.steps li { list-style: none; padding: 16px 14px; border-radius: 14px; background: #fffdf8; border: 1px solid var(--line); font-size: 14px; color: var(--body) }
+.steps li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; margin-bottom: 10px; border-radius: 50%; background: var(--forest); color: #fff; font-weight: 600; font-size: 13px }
+.steps b { display: block; color: var(--ink) }
+.species { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: start; margin-top: 8px }
+.facts { display: grid; gap: 10px; margin-top: 24px }
+.facts div { display: flex; gap: 14px; padding: 14px 16px; border-radius: 12px; background: #fffdf8; border: 1px solid var(--line); font-size: 15px }
+.facts span:first-child { min-width: 110px; color: var(--body) }
+.assume { border-radius: 18px; padding: 26px; background: #b8863b12; border: 1px dashed var(--ochre) }
+.assume h3 { font-size: 22px; margin-bottom: 12px }
+.assume ul { margin: 0; padding-left: 18px; color: #6d5422; font-size: 15px; line-height: 1.8 }
+footer { padding: 40px 0; color: var(--body); font-size: 13px; border-top: 1px solid var(--line) }
+@media (max-width: 860px) {
+  .poses { grid-template-columns: 1fr 1fr } .steps { grid-template-columns: 1fr 1fr } .species { grid-template-columns: 1fr; gap: 32px }
+}
+</style>
+</head>
+<body>
+
+<section class="stage" id="stage">
+  <div class="stage-header">
+    <div class="logo" id="stageLogo"></div>
+    <nav aria-hidden="true"><span>El Parque</span><span>Visita</span><span>Actividades</span><span>Apoya</span></nav>
+  </div>
+  <div class="stage-inner"><p class="eyebrow">Propuesta · identidad en movimiento</p></div>
+  <div class="stage-controls">
+    <button class="chip" id="playBtn" type="button">Ver el vuelo</button>
+    <button class="chip" id="loopBtn" type="button" aria-pressed="true">Repetir cada 10 s</button>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <p class="eyebrow">La idea</p>
+    <h2>El pájaro del logo cobra vida.</h2>
+    <p class="lead">Cada cierto tiempo el pájaro abre las alas, deja el logo y sale de escena. Por unos segundos solo queda el nombre del parque. Luego vuelve planeando y se posa en su lugar. Es un gesto breve y ocasional, que no distrae: le da al sitio la sensación de un lugar vivo.</p>
+    <ol class="steps" style="padding:0">
+      <li><b>Posado</b>Como en el logo actual.</li>
+      <li><b>Se agacha</b>Y levanta las alas.</li>
+      <li><b>Despega</b>Cruza el cielo aleteando y sale por la derecha.</li>
+      <li><b>Ausente</b>2,4 s, solo queda el nombre.</li>
+      <li><b>Regresa</b>Entra por la izquierda y planea.</li>
+      <li><b>Se posa</b>Frena, aterriza y pliega las alas.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" style="background:var(--soft)">
+  <div class="wrap">
+    <p class="eyebrow">Animación cuadro a cuadro</p>
+    <h2>Ocho dibujos, uno tras otro.</h2>
+    <p class="lead">Como en el stop motion, el pájaro no se mueve de forma continua: cambia de dibujo unas 12 veces por segundo y avanza a pequeños saltos. Son siluetas planas generadas con Gemini y calcadas a vectores; conservan la diadema blanca del chorlito.</p>
+    <div class="frames" id="frames"></div>
+    <p class="lead" style="margin-top:28px;font-size:15px">Despegue: <b>posado → se agacha → despega → alas arriba</b>. Vuelo: ciclo de 4 dibujos en bucle. Aterrizaje: el mismo camino al revés.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap species">
+    <div>
+      <p class="eyebrow">¿Qué pájaro es?</p>
+      <h2>Proponemos el chorlito cordillerano.</h2>
+      <p class="lead">El pico fino y algo curvado hacia abajo, el cuerpo compacto sobre patas cortas y, sobre todo, la banda que cruza la cabeza (su "diadema") calzan con el chorlito cordillerano (<i>Phegornis mitchellii</i>). Es el ave emblema de los humedales altoandinos, justo lo que llevó al Juncal a ser sitio Ramsar.</p>
+      <div class="facts">
+        <div><span>Hábitat</span><span>Vegas y bofedales altoandinos, endémico de los Andes</span></div>
+        <div><span>En el parque</span><span>Registrado en el Juncal, incluso con nido y huevos</span></div>
+        <div><span>Estado</span><span>Casi amenazado (UICN) y raro en Chile</span></div>
+        <div><span>Relato</span><span>Si se pisan las vegas, se pierde su hogar: conecta con la regla más importante del parque</span></div>
+      </div>
+    </div>
+    <div class="assume">
+      <h3>Supuestos por confirmar en la reunión</h3>
+      <ul>
+        <li>Qué especie representa el logo (si es otra, se ajustan pico, patas y forma del ala).</li>
+        <li>Archivos originales del logo (AI, SVG o PDF).</li>
+        <li>Si están abiertos a actualizar la tipografía del nombre.</li>
+        <li>Frecuencia del vuelo: proponemos uno cada 12–17 s y al pasar el mouse.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Concepto · Parque Andino Juncal · dibujo provisorio hasta tener el logo original</div></footer>
+
+<script src="assets/logo-juncal-data.js"></script>
+<script src="assets/ave-juncal.js"></script>
+<script>
+(() => {
+  const stage = document.getElementById('stage');
+  const bird = AveJuncal.logo(document.getElementById('stageLogo'));
+  const names = { perch: 'Posado', crouch: 'Se agacha', lift: 'Despega', upBack: 'Alas arriba', up: 'Vuelo 1', mid: 'Vuelo 2', level: 'Vuelo 3', level2: 'Vuelo 4' };
+  for (const [frame, label] of Object.entries(names)) {
+    const cell = document.createElement('div'); cell.className = 'frame';
+    document.getElementById('frames').append(cell);
+    AveJuncal.mount(cell, frame); cell.insertAdjacentHTML('beforeend', '<span>' + label + '</span>');
+  }
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const playBtn = document.getElementById('playBtn'), loopBtn = document.getElementById('loopBtn');
+  let busy = false, loop = !reduced, timer = null;
+  loopBtn.setAttribute('aria-pressed', loop);
+  async function fly() {
+    if (busy) return;
+    busy = true; playBtn.disabled = true;
+    await bird.play({ stage });
+    busy = false; playBtn.disabled = false;
+    if (loop) timer = setTimeout(fly, 10000);
+  }
+  playBtn.addEventListener('click', () => { clearTimeout(timer); fly(); });
+  loopBtn.addEventListener('click', () => {
+    loop = !loop; loopBtn.setAttribute('aria-pressed', loop);
+    clearTimeout(timer); if (loop && !busy) timer = setTimeout(fly, 1500);
+  });
+  if (loop) timer = setTimeout(fly, 1800);
+})();
+</script>
+</body>
+</html>
