@@ -22,7 +22,8 @@ createServer(async (req, res) => {
     const body = await readFile(file);
     res.writeHead(200, {
       'Content-Type': types[extname(file)] || 'application/octet-stream',
-      'Cache-Control': extname(file) === '.html' ? 'no-cache' : 'public, max-age=3600'
+      // Sin caché larga: cada deploy se ve de inmediato.
+      'Cache-Control': 'no-cache'
     });
     res.end(body);
   } catch { send(res, 404); }

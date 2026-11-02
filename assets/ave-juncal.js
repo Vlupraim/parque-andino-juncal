@@ -66,8 +66,11 @@
       show('perch');
     }
 
+    // Aleteo en el lugar (para el velo de carga); devuelve la función que lo detiene y lo posa.
+    function hover(fps = 12) { flap(fps); return () => stop('perch'); }
+
     show(start);
-    return { svg, play, show };
+    return { svg, play, show, hover };
   }
 
   // Dibuja el logo completo: el texto fijo y el pájaro en su caja sobre la J.

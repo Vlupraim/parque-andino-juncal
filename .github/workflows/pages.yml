@@ -26,8 +26,8 @@ jobs:
       - name: Reunir solo los archivos del sitio
         run: |
           mkdir _site
-          cp index.html concepto-logo.html _site/
-          cp -r assets _site/
+          cp *.html _site/
+          cp -r assets actividades noticias _site/
           touch _site/.nojekyll
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

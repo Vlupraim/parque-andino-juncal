@@ -4,8 +4,17 @@ Maqueta del nuevo sitio de [parqueandinojuncal.cl](https://parqueandinojuncal.cl
 
 ## Páginas
 
-- `index.html`: la maqueta del sitio.
+- `index.html`: portada (hero, reserva, tarifas, reglas, noticias, apoyo y contacto).
+- Páginas interiores con el contenido real del sitio original: `el-parque`, `conservacion`, `visita`, `actividades` (y 6 más en `actividades/`), `noticias` (y 5 más en `noticias/`), `apoya`, `preguntas-frecuentes` y `terminos`.
 - `concepto-logo.html`: explicación del logo y la animación del pájaro, para el cliente.
+
+Las páginas interiores, y el header y el pie que comparten con la portada, se generan con:
+
+```bash
+node _tools/construir.mjs
+```
+
+El contenido se edita en `_tools/construir.mjs`; después se vuelve a ejecutar. Entre páginas hay una transición con el logo, y cada página se precarga al acercar el mouse a su enlace (`assets/site.js`).
 
 ## Ver en local
 
@@ -36,4 +45,4 @@ Tipografías: EB Garamond y Montserrat (licencia SIL OFL), en `_tools/fonts`.
 
 ## Pendiente
 
-Las fotos son las del sitio actual, enlazadas desde parqueandinojuncal.cl. Las noticias, los cupos del calendario y los datos de la franja de estado son de ejemplo.
+Las fotos son las del sitio actual, enlazadas desde parqueandinojuncal.cl. Los cupos del calendario de reserva son de ejemplo y el pago todavía no está conectado. El menú en celulares aún no se abre.
