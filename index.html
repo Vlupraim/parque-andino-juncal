@@ -194,14 +194,40 @@
     <form class="booker" data-reveal style="--d:180ms" onsubmit="return false">
       <div class="bk-block">
         <span class="bk-label">Día</span>
-        <div class="days" id="bkDays"></div>
+        <div class="cal">
+          <div class="cal-head">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Mes anterior">‹</button>
+            <strong id="calMonth" aria-live="polite"></strong>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Mes siguiente">›</button>
+          </div>
+          <div class="cal-grid" id="bkCal" role="grid"></div>
+          <p class="cal-note" id="calNote"></p>
+          <p class="cal-legend"><span><i class="sw sw-free"></i>Disponible</span><span><i class="sw sw-full"></i>Sin cupo</span><span><i class="sw sw-closed"></i>Cerrado por nieve</span></p>
+        </div>
       </div>
       <div class="bk-block">
         <span class="bk-label">Visitantes</span>
         <div class="counters">
           <div class="counter"><span>Adultos</span><button type="button" data-step="adults:-1" aria-label="Menos adultos">−</button><output id="bkAdults">2</output><button type="button" data-step="adults:1" aria-label="Más adultos">+</button></div>
           <div class="counter"><span>Niños<small>hasta 12 años</small></span><button type="button" data-step="kids:-1" aria-label="Menos niños">−</button><output id="bkKids">0</output><button type="button" data-step="kids:1" aria-label="Más niños">+</button></div>
-          <label class="check"><input type="checkbox" id="bkResident"> Somos residentes de San Felipe o Los Andes</label>
+          <label class="check"><input type="checkbox" id="bkResident" aria-controls="bkProof"> Somos residentes de San Felipe o Los Andes</label>
+        </div>
+        <div class="proof" id="bkProof" hidden>
+          <p class="proof-intro"><b>25% de descuento en la entrada adulto.</b> Sube una foto de un documento con tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
+          <label class="proof-drop" id="proofDrop">
+            <input type="file" id="proofFile" accept="image/*" capture="environment">
+            <span class="proof-cta"><b>Sube o toma una foto</b><small>JPG o PNG · el documento completo, plano y con buena luz</small></span>
+            <img id="proofPreview" alt="" hidden>
+          </label>
+          <ul class="proof-checks" id="proofChecks" hidden>
+            <li data-check="size">Resolución suficiente</li>
+            <li data-check="sharp">Imagen nítida</li>
+            <li data-check="light">Buena iluminación</li>
+            <li data-check="comuna">Comuna de San Felipe o Los Andes</li>
+            <li data-check="doc">Tipo de documento reconocible</li>
+          </ul>
+          <p class="proof-status" id="proofStatus" aria-live="polite"></p>
+          <p class="proof-privacy">La imagen se analiza en tu dispositivo y no se envía a ningún servidor. El guardaparque confirmará el descuento con tu carnet al llegar.</p>
         </div>
       </div>
       <div class="bk-block">

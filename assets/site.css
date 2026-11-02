@@ -161,10 +161,6 @@ h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.12; letter-spacing: -.0
 .widget { border-radius: 22px; padding: 28px; background: #fff; box-shadow: 0 20px 50px -30px #1f4a3d55; border: 1px solid var(--line) }
 .widget .row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px }
 .widget .row:last-of-type { border: 0; font-weight: 600 }
-.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 14px 0 18px; font-size: 12px; text-align: center }
-.cal span { padding: 8px 0; border-radius: 8px; background: var(--soft) }
-.cal .full { background: #f1d9d3; color: #9a4b3d; text-decoration: line-through }
-.cal .sel { background: var(--forest); color: #fff }
 .sitemap { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-top: 44px }
 .sitemap div { padding: 20px; border-radius: 14px; border: 1px solid #ffffff2e; background: #ffffff0a }
 .sitemap h3 { font-size: 20px; color: #fff; margin-bottom: 10px }
@@ -351,12 +347,13 @@ h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.12; letter-spacing: -.0
 .news-controls button { width: 46px; height: 46px; border-radius: 50%; border: 1px solid #16302a2e; background: #fff; cursor: pointer; color: var(--forest); font-size: 18px; transition: background .2s }
 .news-controls button:hover { background: var(--forest); color: #fff }
 .news-count { font: 500 15px var(--sans); color: var(--body); font-variant-numeric: tabular-nums; margin-left: 6px }
-.news-stack { position: relative; height: 470px }
-.news-card { position: absolute; inset: 0 60px 30px 30px; border-radius: 22px; overflow: hidden; background: #2b3a36 center / cover; color: #fff; cursor: pointer;
-  box-shadow: 0 24px 50px -28px #0b1f1a99; transition: transform 800ms var(--ease), opacity 600ms, filter 600ms; transform-origin: 50% 110% }
+/* Carrusel en 3D: la foto destacada al frente y las siguientes giradas hacia ella, apiladas hacia la derecha. */
+.news-stack { position: relative; height: 470px; perspective: 1500px; perspective-origin: 100% 50% }
+.news-card { position: absolute; left: 0; top: 24px; width: 64%; height: 420px; border-radius: 22px; overflow: hidden; background: #2b3a36 center / cover; color: #fff; cursor: pointer;
+  box-shadow: 0 30px 60px -30px #0b1f1aa6; transition: transform 900ms var(--ease), opacity 600ms, filter 700ms; transform-origin: 0% 50%; backface-visibility: hidden; will-change: transform }
 .news-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, #0b1f1acc) }
 .news-card span { position: absolute; left: 22px; bottom: 18px; z-index: 1; font-size: 12px; letter-spacing: .14em; text-transform: uppercase }
-.news-card.leaving { transform: translate(-70%, 30px) rotate(-14deg) !important; opacity: 0 }
+.news-card.leaving { transform: translateX(135%) translateZ(-260px) rotateY(-58deg) !important; opacity: 0 }
 
 @media (max-width: 900px) {
   .price-cols, .rule-list, .news-layout { grid-template-columns: 1fr }
@@ -365,7 +362,7 @@ h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.12; letter-spacing: -.0
   .booker { padding: 24px 18px }
   .bk-total { flex-direction: column; align-items: stretch; text-align: center }
   .figures { grid-template-columns: 1fr 1fr }
-  .news-stack { height: 380px } .news-card { inset: 0 34px 26px 10px }
+  .news-stack { height: 360px } .news-card { width: 76%; height: 320px; top: 16px }
   .conservation { padding: 170px 0 190px }
 }
 
@@ -577,3 +574,53 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
 @media (max-width: 900px) and (prefers-reduced-motion: reduce) {
   .mobile-menu, .mobile-menu > *, .menu-toggle span { transition: none }
 }
+
+/* ───────── Reservador: calendario mensual ───────── */
+.cal { max-width: 460px }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px }
+.cal-head strong { font: 500 24px var(--serif); text-transform: capitalize }
+.cal-nav { width: 40px; height: 40px; border-radius: 50%; border: 1px solid #16302a2e; background: #fff; color: var(--forest); font-size: 20px; line-height: 1; cursor: pointer; transition: background .2s }
+.cal-nav:hover:not(:disabled) { background: var(--paper) }
+.cal-nav:disabled { opacity: .3; cursor: default }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px }
+.cal-dow { padding: 6px 0; text-align: center; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--body) }
+.cal-day { height: 42px; border: 1px solid transparent; border-radius: 12px; background: var(--paper); font: 500 16px var(--sans); color: var(--ink); cursor: pointer; transition: background .2s, border-color .2s, transform .2s }
+.cal-day:hover:not(:disabled) { border-color: var(--forest); transform: translateY(-1px) }
+.cal-day:disabled { background: transparent; color: #16302a40; cursor: not-allowed }
+.cal-day.is-full:disabled { background: #f1d9d3; color: #9a4b3d; text-decoration: line-through }
+.cal-day.is-closed { background: repeating-linear-gradient(135deg, #ebe8de 0 4px, #f3f1ea 4px 8px); color: #16302a38 }
+.cal-day.is-today { box-shadow: inset 0 0 0 1px var(--ochre) }
+.cal-day[aria-pressed="true"] { background: var(--forest); color: #fff; border-color: var(--forest) }
+.cal-note { margin-top: 10px; font-size: 13px; color: var(--body); min-height: 1.5em }
+.cal-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 6px; font-size: 12px; color: var(--body) }
+.cal-legend span { display: inline-flex; align-items: center; gap: 6px }
+.cal-legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 4px }
+.sw-free { background: var(--paper); border: 1px solid #16302a2e } .sw-full { background: #f1d9d3 }
+.sw-closed { background: repeating-linear-gradient(135deg, #ebe8de 0 3px, #f3f1ea 3px 6px); border: 1px solid #16302a1f }
+
+/* ───────── Reservador: comprobante de residencia ───────── */
+.proof { margin-top: 20px; padding: 22px; border-radius: 20px; background: var(--paper); border: 1px solid #16302a14; animation: faq-open 420ms var(--ease) }
+.proof[hidden] { display: none }
+.proof-intro { font-size: 14px; line-height: 1.6; color: var(--body) }
+.proof-intro b { color: var(--ink) }
+.proof-drop { position: relative; display: grid; place-items: center; gap: 10px; min-height: 130px; margin-top: 14px; padding: 18px; border-radius: 16px; border: 1.5px dashed #1f4a3d55; background: #fff; text-align: center; cursor: pointer; transition: border-color .2s, background .2s }
+.proof-drop:hover { border-color: var(--forest); background: #fbfaf6 }
+.proof-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer }
+.proof-cta b { display: block; color: var(--forest) }
+.proof-cta small { display: block; margin-top: 2px; font-size: 12px; color: var(--body) }
+.proof-drop img { max-height: 180px; max-width: 100%; border-radius: 10px; box-shadow: 0 10px 24px -14px #0006 }
+.proof-checks { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14px }
+.proof-checks[hidden] { display: none }
+.proof-checks li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--body) }
+.proof-checks li::before { content: ''; flex: 0 0 18px; height: 18px; border-radius: 50%; background: #16302a14 center / 11px no-repeat }
+.proof-checks li[data-state="wait"]::before { border: 2px solid #1f4a3d33; border-top-color: var(--forest); background: none; animation: spin .8s linear infinite }
+.proof-checks li[data-state="ok"]::before { background-color: #2d6a4f; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.3 5 8.6l4.5-5' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") }
+.proof-checks li[data-state="fail"]::before { background-color: #a8432f; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 3.5l5 5m0-5-5 5' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") }
+.proof-checks li[data-state="warn"]::before { background-color: var(--ochre); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 3v3.6M6 8.8v.1' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") }
+.proof-checks li[data-state="ok"] { color: var(--ink) }
+.proof-checks li[data-note]:not([data-note=""])::after { content: '— ' attr(data-note); font-size: 13px; color: var(--body) }
+@keyframes spin { to { transform: rotate(360deg) } }
+.proof-status { margin-top: 14px; font-size: 14px; line-height: 1.55 }
+.proof-status[data-state="ok"] { padding: 12px 14px; border-radius: 12px; background: #2d6a4f14; color: #1f4a3d }
+.proof-status[data-state="fail"], .proof-status[data-state="warn"] { padding: 12px 14px; border-radius: 12px; background: #b8863b14; color: #6d5422 }
+.proof-privacy { margin-top: 12px; font-size: 12px; color: var(--body) }

@@ -150,10 +150,12 @@
   addEventListener('click', e => { if (!e.target.closest('.nav-dropdown')) closeOthers(null); });
 })();
 
-// Botón magnético: dentro de un radio alrededor del botón, este se desplaza hacia el cursor y el texto un poco más.
+// Botón magnético: dentro de un radio alrededor del botón, este se desplaza levemente hacia el cursor y el texto un poco más.
+// Topes bajos (6 px el botón, 2 px extra el texto) para que siga siendo fácil de apretar.
 (() => {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const reach = 36, pull = .28, labelPull = .16;
+  const reach = 20, pull = .12, labelPull = .05, maxPull = 6, maxLabel = 2;
+  const clamp = (v, max) => Math.max(-max, Math.min(max, v));
   for (const el of document.querySelectorAll('[data-magnetic]')) {
     const label = el.querySelector('.magnetic-label');
     let active = false, offset = [0, 0];
@@ -169,9 +171,9 @@
       active = true;
       el.classList.add('is-pulled');
       const dx = e.clientX - (r.left + r.right) / 2, dy = e.clientY - (r.top + r.bottom) / 2;
-      offset = [dx * pull, dy * pull];
+      offset = [clamp(dx * pull, maxPull), clamp(dy * pull, maxPull)];
       el.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`;
-      label.style.transform = `translate(${dx * labelPull}px, ${dy * labelPull}px)`;
+      label.style.transform = `translate(${clamp(dx * labelPull, maxLabel)}px, ${clamp(dy * labelPull, maxLabel)}px)`;
     }, { passive: true });
   }
 })();
@@ -222,20 +224,47 @@ function countUp(el) {
   const names = { day: 'solo el día', hornitos: 'Camping Los Hornitos', morrenas: 'Camping Las Morrenas', refugio: 'Refugio del Arriero' };
   const weekday = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'], month = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
-  // Próximos 14 días; dos marcados como llenos solo para la maqueta.
-  const days = document.getElementById('bkDays');
-  const today = new Date();
-  for (let i = 1; i <= 14; i++) {
-    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'day';
-    b.innerHTML = `<span>${weekday[d.getDay()]}</span><b>${d.getDate()}</b><span>${month[d.getMonth()]}</span>`;
-    b.disabled = i === 5 || i === 12;
-    if (b.disabled) b.title = 'Sin cupo';
-    b.addEventListener('click', () => { state.day = d; days.querySelectorAll('.day').forEach(x => x.setAttribute('aria-pressed', x === b)); render(); });
-    days.append(b);
+  // Calendario mensual: hasta 12 meses hacia adelante. El parque cierra de junio a septiembre por la nieve.
+  // Los días "sin cupo" son de ejemplo para la maqueta; en producción vendrían del sistema de reservas.
+  const monthName = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const cal = document.getElementById('bkCal'), calMonth = document.getElementById('calMonth'), calNote = document.getElementById('calNote');
+  const prevBtn = document.getElementById('calPrev'), nextBtn = document.getElementById('calNext');
+  const now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const first = new Date(today.getFullYear(), today.getMonth(), 1), last = new Date(today.getFullYear(), today.getMonth() + 11, 1);
+  let view = new Date(first);
+  const closedMonth = d => d.getMonth() >= 5 && d.getMonth() <= 8;
+  const full = d => [0, 5, 6].includes(d.getDay()) && (d.getDate() * 7 + d.getMonth()) % 6 === 0;
+  const available = d => d > today && !closedMonth(d) && !full(d);
+  const sameDay = (a, b) => a && b && a.getTime() === b.getTime();
+
+  function drawCalendar() {
+    calMonth.textContent = `${monthName[view.getMonth()]} ${view.getFullYear()}`;
+    prevBtn.disabled = view <= first;
+    nextBtn.disabled = view >= last;
+    const offset = (view.getDay() + 6) % 7, total = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+    cal.innerHTML = ['lu', 'ma', 'mi', 'ju', 'vi', 'sá', 'do'].map(d => `<span class="cal-dow">${d}</span>`).join('') + '<span></span>'.repeat(offset);
+    for (let n = 1; n <= total; n++) {
+      const d = new Date(view.getFullYear(), view.getMonth(), n);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cal-day' + (closedMonth(d) ? ' is-closed' : full(d) ? ' is-full' : '') + (sameDay(d, today) ? ' is-today' : '');
+      b.textContent = n;
+      b.disabled = !available(d);
+      b.setAttribute('aria-pressed', sameDay(d, state.day));
+      b.setAttribute('aria-label', `${weekday[d.getDay()]} ${n} de ${monthName[d.getMonth()]}${full(d) && !closedMonth(d) ? ', sin cupo' : ''}`);
+      b.addEventListener('click', () => { state.day = d; drawCalendar(); render(); });
+      cal.append(b);
+    }
+    calNote.textContent = closedMonth(view)
+      ? 'El parque está cerrado de junio a septiembre: la nieve cubre el valle y el camino queda sin mantención.'
+      : 'De viernes a domingo se ingresa solo con reserva.';
   }
-  days.querySelector('.day:not(:disabled)').click();
+  prevBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCalendar(); });
+  nextBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCalendar(); });
+  for (let d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1); !state.day; d.setDate(d.getDate() + 1))
+    if (available(d)) state.day = new Date(d);
+  view = new Date(state.day.getFullYear(), state.day.getMonth(), 1);
+  drawCalendar();
 
   form.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
     const [key, delta] = b.dataset.step.split(':');
@@ -248,10 +277,21 @@ function countUp(el) {
     form.querySelectorAll('[data-stay]').forEach(x => x.setAttribute('aria-pressed', x === b));
     render();
   }));
-  document.getElementById('bkResident').addEventListener('change', e => { state.resident = e.target.checked; render(); });
+  // Residentes: el descuento se aplica cuando el comprobante queda pre-validado; el guardaparque lo confirma al llegar.
+  const proof = document.getElementById('bkProof');
+  document.getElementById('bkResident').addEventListener('change', e => {
+    state.resident = e.target.checked;
+    proof.hidden = !state.resident;
+    render();
+  });
+  checkResidence(file => {
+    state.proofOk = file;
+    render();
+  });
 
   function render() {
-    const { adults, kids, nights, stay, resident } = state;
+    const { adults, kids, nights, stay } = state;
+    const resident = state.resident && state.proofOk;
     let total = adults * 8000 * (resident ? .75 : 1) + kids * 4000;
     if (stay === 'hornitos') total += (adults * 5000 + kids * 2500) * nights;
     if (stay === 'morrenas') total += (adults * 3500 + kids * 2500) * nights;
@@ -263,11 +303,105 @@ function countUp(el) {
     const people = `${adults} adulto${adults > 1 ? 's' : ''}` + (kids ? ` y ${kids} niño${kids > 1 ? 's' : ''}` : '');
     const when = state.day ? `${weekday[state.day.getDay()]} ${state.day.getDate()} ${month[state.day.getMonth()]}` : '';
     const sleep = stay === 'day' ? names.day : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;
-    document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}`;
+    document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}${resident ? ' · 25% residente' : ''}`;
     document.getElementById('bkTotal').textContent = clp(total);
   }
   render();
 })();
+
+// Comprobante de residencia, analizado en el navegador (sin subir la imagen a ningún servidor):
+// 1) resolución, 2) nitidez (varianza del laplaciano), 3) iluminación, 4) OCR con Tesseract para encontrar
+// una de las 10 comunas de las provincias de San Felipe y Los Andes y el tipo de documento.
+// No prueba que el documento sea auténtico: solo filtra fotos ilegibles o de otra comuna antes de la verificación humana.
+function checkResidence(onResult) {
+  const input = document.getElementById('proofFile');
+  if (!input) return;
+  const preview = document.getElementById('proofPreview'), checks = document.getElementById('proofChecks'), status = document.getElementById('proofStatus');
+  const COMUNAS = ['los andes', 'calle larga', 'rinconada', 'san esteban', 'san felipe', 'llaillay', 'llay llay', 'catemu', 'panquehue', 'putaendo', 'santa maria'];
+  const DOCS = ['certificado', 'residencia', 'domicilio', 'registro social', 'hogares', 'cartola', 'boleta', 'factura', 'cliente', 'direccion', 'junta de vecinos', 'consumo'];
+  const normal = t => t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ');
+  const mark = (name, state, note) => {
+    const li = checks.querySelector(`[data-check="${name}"]`);
+    li.dataset.state = state;
+    li.dataset.note = note || '';
+  };
+  let tesseract = null;
+  const loadTesseract = () => tesseract ??= new Promise((ok, fail) => {
+    const s = Object.assign(document.createElement('script'), { src: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js', onload: () => ok(window.Tesseract), onerror: fail });
+    document.head.append(s);
+  });
+
+  function measure(img) {
+    // Imagen reducida a 700 px de ancho, en escala de grises.
+    const w = Math.min(700, img.naturalWidth), h = Math.round(img.naturalHeight * w / img.naturalWidth);
+    const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+    const ctx = c.getContext('2d', { willReadFrequently: true });
+    ctx.drawImage(img, 0, 0, w, h);
+    const px = ctx.getImageData(0, 0, w, h).data, g = new Float32Array(w * h);
+    let sum = 0, sq = 0;
+    for (let i = 0; i < g.length; i++) { g[i] = px[i * 4] * .299 + px[i * 4 + 1] * .587 + px[i * 4 + 2] * .114; sum += g[i]; sq += g[i] * g[i]; }
+    let lapSum = 0, lapSq = 0, n = 0;
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x, v = g[i - w] + g[i + w] + g[i - 1] + g[i + 1] - 4 * g[i];
+      lapSum += v; lapSq += v * v; n++;
+    }
+    const mean = sum / g.length;
+    return { brightness: mean, contrast: Math.sqrt(sq / g.length - mean * mean), sharpness: lapSq / n - (lapSum / n) ** 2 };
+  }
+
+  input.addEventListener('change', async () => {
+    const file = input.files[0];
+    if (!file) return;
+    onResult(false);
+    checks.hidden = false;
+    checks.querySelectorAll('li').forEach(li => { li.dataset.state = 'wait'; li.dataset.note = ''; });
+    status.dataset.state = '';
+    status.textContent = 'Revisando la foto…';
+    await new Promise(done => {
+      preview.onload = preview.onerror = done;
+      preview.src = URL.createObjectURL(file);
+      preview.hidden = false;
+    });
+
+    const longSide = Math.max(preview.naturalWidth, preview.naturalHeight);
+    mark('size', longSide >= 1000 ? 'ok' : 'warn', longSide >= 1000 ? '' : `${longSide}px: acércate o usa más resolución`);
+    // Un documento es casi todo papel claro: se rechaza solo si está muy oscuro, casi en blanco o sin contraste.
+    const { brightness, contrast, sharpness } = measure(preview);
+    const sharp = sharpness >= 45, light = brightness >= 60 && brightness <= 250 && contrast >= 22;
+    mark('sharp', sharp ? 'ok' : 'fail', sharp ? '' : 'se ve borrosa: apoya el teléfono y vuelve a sacarla');
+    mark('light', light ? 'ok' : 'fail', light ? '' : brightness < 60 ? 'muy oscura' : contrast < 22 ? 'el texto no se distingue: evita reflejos' : 'casi en blanco');
+    if (!sharp || !light) {
+      mark('comuna', 'skip'); mark('doc', 'skip');
+      status.dataset.state = 'fail';
+      status.textContent = 'La foto no se puede leer bien. Vuelve a sacarla, o muestra el documento al llegar.';
+      return;
+    }
+
+    try {
+      const T = await loadTesseract();
+      const { data } = await T.recognize(file, 'spa', {
+        logger: m => { if (m.status === 'recognizing text') status.textContent = `Leyendo el documento… ${Math.round(m.progress * 100)}%`; }
+      });
+      const text = normal(data.text);
+      const comuna = COMUNAS.find(c => text.includes(c));
+      const doc = DOCS.find(k => text.includes(k));
+      mark('comuna', comuna ? 'ok' : 'fail', comuna ? comuna.replace(/\b\w/g, l => l.toUpperCase()) : 'no encontramos una comuna de las provincias');
+      mark('doc', doc ? 'ok' : 'warn', doc ? '' : 'no reconocemos el tipo de documento');
+      if (comuna) {
+        status.dataset.state = 'ok';
+        status.textContent = 'Comprobante pre-validado. Aplicamos el 25% en la entrada adulto; el guardaparque lo confirmará con tu carnet.';
+        onResult(true);
+      } else {
+        status.dataset.state = 'fail';
+        status.textContent = 'No encontramos una comuna de San Felipe o Los Andes en el documento. Prueba con otra foto, o acredítalo al llegar y se aplica el descuento en la entrada.';
+      }
+    } catch {
+      mark('comuna', 'skip'); mark('doc', 'skip');
+      status.dataset.state = 'warn';
+      status.textContent = 'No pudimos leer el documento ahora. Puedes acreditar tu residencia al llegar.';
+    }
+  });
+}
 
 // Noticias: pila de fotos que rota sola mientras se ve; con el mouse encima se abre en abanico y se detiene.
 // Los datos vienen de assets/noticias-data.js (noticias reales y prensa del sitio original).
@@ -291,13 +425,15 @@ function countUp(el) {
   function layout() {
     order.forEach((index, depth) => {
       const card = cards[index];
-      const t = fanned
-        ? `translate(${depth * 34}px, ${depth * -4}px) rotate(${depth * 5}deg)`
-        : `translate(${depth * 16}px, ${depth * -14}px) rotate(${depth * 2.4}deg) scale(${1 - depth * .045})`;
-      card.style.transform = t;
+      // La de adelante mira de frente; las siguientes se apilan hacia la derecha, giradas hacia ella.
+      // Con el mouse encima se separan un poco más para dejar ver cada foto.
+      const x = depth === 0 ? 0 : (fanned ? 46 : 38) + (depth - 1) * (fanned ? 16 : 12);
+      card.style.transform = depth === 0
+        ? 'translateX(0) translateZ(0) rotateY(0deg)'
+        : `translateX(${x}%) translateZ(${-90 - depth * 70}px) rotateY(${fanned ? -34 : -44}deg)`;
       card.style.zIndex = 20 - depth;
       card.style.opacity = depth > 4 ? 0 : 1;
-      card.style.filter = `brightness(${1 - Math.min(depth, 4) * .1})`;
+      card.style.filter = `brightness(${1 - Math.min(depth, 4) * .12}) saturate(${depth ? .85 : 1})`;
     });
     const [date, title, text, , , href] = items[order[0]];
     info.innerHTML = `<time>${date}</time><h3>${title}</h3><p>${text}</p><a class="text-link" href="${href}">Leer más →</a>`;
