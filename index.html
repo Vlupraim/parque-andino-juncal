@@ -8,7 +8,7 @@
 <title>Parque Andino Juncal · Al pie del Glaciar Juncal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/site.css?v=b6af359e">
 </head>
 <body>
 
@@ -206,7 +206,7 @@
           </div>
           <div class="cal-grid" id="bkCal" role="grid"></div>
           <p class="cal-note" id="calNote"></p>
-          <p class="cal-legend"><span><i class="sw sw-free"></i>Disponible</span><span><i class="sw sw-full"></i>Sin cupo</span><span><i class="sw sw-closed"></i>Cerrado por nieve</span></p>
+          <p class="cal-legend"><span><i class="sw sw-free"></i>Disponible</span><span><i class="sw sw-full"></i>Sin cupo</span><span><i class="sw sw-closed"></i>Cerrado por nieve</span><span id="calStay" hidden><i class="sw sw-stay"></i>Tu estadía</span></p>
         </div>
       </div>
       <div class="bk-block">
@@ -216,44 +216,50 @@
           <div class="counter"><span>Niños<small>hasta 12 años</small></span><button type="button" data-step="kids:-1" aria-label="Menos niños">−</button><output id="bkKids">0</output><button type="button" data-step="kids:1" aria-label="Más niños">+</button></div>
           <label class="check"><input type="checkbox" id="bkResident" aria-controls="bkProof"> Somos residentes de San Felipe o Los Andes</label>
         </div>
-        <div class="proof" id="bkProof" hidden>
-          <p class="proof-intro"><b>25% de descuento en la entrada adulto.</b> Se acredita con un documento que muestre tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
+      </div>
+      </div>
+      <div class="proof" id="bkProof" hidden>
+        <div class="proof-head">
+          <p class="proof-intro"><b>Descuento de residente: 25% en la entrada adulto.</b> Se acredita con un documento que muestre tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
           <div class="proof-mode" role="radiogroup" aria-label="Cómo acreditar la residencia">
             <button type="button" data-proof-mode="online" role="radio" aria-checked="true"><b>Subir comprobante ahora</b><small>Pagas todo en línea, con el descuento</small></button>
             <button type="button" data-proof-mode="gate" role="radio" aria-checked="false"><b>Acreditar en la entrada</b><small>Reservas el día y pagas las entradas allá</small></button>
           </div>
-          <div class="proof-gate" id="proofGate" hidden>
-            <p>Reserva tu día ahora y paga las entradas al llegar. Muestra al guardaparque <b>tu carnet y un documento con tu domicilio</b>: con eso se aplica el 25% en la entrada adulto. Si no lo llevas, pagas la entrada normal.</p>
-            <p>Si eliges alojamiento, ese monto sí se paga en línea para asegurar tu cupo. Recibirás un <b>ticket de reserva</b> con código QR para presentar en la entrada.</p>
-          </div>
-          <div class="proof-online" id="proofOnline">
-          <div class="proof-notice">
-            <p><b>Cómo tratamos esta foto.</b> El documento muestra datos personales, como tu nombre y tu dirección. Lo usamos <b>solo para verificar que vives en una comuna con descuento</b>, y nada más.</p>
-            <ul>
-              <li>Se analiza <b>en tu dispositivo</b>: no se envía ni se guarda en ningún servidor.</li>
-              <li>Al terminar el análisis, <b>la foto y el texto leído se eliminan</b> de esta página. Solo queda el resultado: sí o no, y la comuna.</li>
-              <li>No se usa para otros fines, no se comparte con terceros y no se usa para publicidad.</li>
-            </ul>
-          </div>
-          <label class="check proof-consent"><input type="checkbox" id="proofConsent"> Acepto que se analice la foto de mi documento con este fin, según la <a href="privacidad.html#residencia">política de privacidad</a>.</label>
-          <label class="proof-drop" id="proofDrop" aria-disabled="true">
-            <input type="file" id="proofFile" accept="image/*" capture="environment" disabled>
-            <span class="proof-cta"><b>Sube o toma una foto</b><small>JPG o PNG · el documento completo, plano y con buena luz</small></span>
-            <img id="proofPreview" alt="" hidden>
-          </label>
-          <ul class="proof-checks" id="proofChecks" hidden>
-            <li data-check="size">Resolución suficiente</li>
-            <li data-check="sharp">Imagen nítida</li>
-            <li data-check="light">Buena iluminación</li>
-            <li data-check="comuna">Comuna de San Felipe o Los Andes</li>
-            <li data-check="doc">Tipo de documento reconocible</li>
-          </ul>
-          <p class="proof-status" id="proofStatus" aria-live="polite"></p>
-          <button class="proof-delete" type="button" id="proofDelete" hidden>Eliminar foto y resultado</button>
-          </div>
-          <p class="proof-privacy">El guardaparque confirma el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
         </div>
-      </div>
+        <div class="proof-gate" id="proofGate" hidden>
+          <p>Reserva ahora y paga las entradas al llegar. Muestra al guardaparque <b>tu carnet y un documento con tu domicilio</b>: con eso se aplica el 25% en la entrada adulto; si no lo llevas, pagas la entrada normal. Si eliges alojamiento, ese monto sí se paga en línea para asegurar tu cupo, y recibes un <b>ticket con código QR</b> para la entrada.</p>
+        </div>
+        <div class="proof-online" id="proofOnline">
+          <div class="proof-side">
+            <details class="proof-notice">
+              <summary><b>Cómo tratamos esta foto:</b> se analiza en tu dispositivo, solo para verificar tu comuna, y se elimina al terminar.</summary>
+              <ul>
+                <li>El documento muestra datos personales, como tu nombre y tu dirección. Lo usamos <b>solo para verificar que vives en una comuna con descuento</b>.</li>
+                <li>Se analiza <b>en tu dispositivo</b>: no se envía ni se guarda en ningún servidor.</li>
+                <li>Al terminar, <b>la foto y el texto leído se eliminan</b> de esta página. Solo queda el resultado: sí o no, y la comuna.</li>
+                <li>No se usa para otros fines, no se comparte con terceros y no se usa para publicidad.</li>
+              </ul>
+            </details>
+            <label class="check proof-consent"><input type="checkbox" id="proofConsent"><span>Acepto que se analice la foto de mi documento con este fin, según la <a href="privacidad.html#residencia">política de privacidad</a>.</span></label>
+            <p class="proof-privacy">El guardaparque confirma el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
+          </div>
+          <div class="proof-main">
+            <label class="proof-drop" id="proofDrop" aria-disabled="true">
+              <input type="file" id="proofFile" accept="image/*" capture="environment" disabled>
+              <span class="proof-cta"><b>Sube o toma una foto</b><small>JPG o PNG · el documento completo, plano y con buena luz</small></span>
+              <img id="proofPreview" alt="" hidden>
+            </label>
+            <ul class="proof-checks" id="proofChecks" hidden>
+              <li data-check="size">Resolución suficiente</li>
+              <li data-check="sharp">Imagen nítida</li>
+              <li data-check="light">Buena iluminación</li>
+              <li data-check="comuna">Comuna de San Felipe o Los Andes</li>
+              <li data-check="doc">Tipo de documento reconocible</li>
+            </ul>
+            <p class="proof-status" id="proofStatus" aria-live="polite"></p>
+            <button class="proof-delete" type="button" id="proofDelete" hidden>Eliminar foto y resultado</button>
+          </div>
+        </div>
       </div>
       <div class="bk-block">
         <span class="bk-label">¿Se quedan a dormir?</span>
@@ -403,9 +409,9 @@
 </footer>
 <!-- /footer -->
 
-<script src="assets/noticias-data.js"></script>
-<script src="assets/logo-juncal-data.js"></script>
-<script src="assets/ave-juncal.js"></script>
-<script src="assets/site.js"></script>
+<script src="assets/noticias-data.js?v=2ddb5498"></script>
+<script src="assets/logo-juncal-data.js?v=6f1ab5ad"></script>
+<script src="assets/ave-juncal.js?v=6f330c68"></script>
+<script src="assets/site.js?v=a3f4a329"></script>
 </body>
 </html>

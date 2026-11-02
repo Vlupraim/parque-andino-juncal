@@ -1,6 +1,7 @@
 // Genera las páginas interiores con el mismo header, pie y transiciones que la portada.
 // El contenido viene del sitio original (parqueandinojuncal.cl), corregido y ordenado.
 // Uso: node _tools/construir.mjs
+import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -533,5 +534,17 @@ let index = readFileSync(indexFile, 'utf8');
 index = index.replace(/<!-- header -->[\s\S]*?<!-- \/header -->/, `<!-- header -->\n${header('')}\n<!-- /header -->`)
   .replace(/<!-- footer -->[\s\S]*?<!-- \/footer -->/, `<!-- footer -->\n${footer('')}\n<!-- /footer -->`);
 writeFileSync(indexFile, index);
+
+// Huella de versión en los CSS y JS propios (?v=…): cambia con el contenido, así ningún navegador
+// mezcla un HTML nuevo con un CSS o JS viejo guardado en caché.
+const assetNames = ['site.css', 'site.js', 'ave-juncal.js', 'logo-juncal-data.js', 'noticias-data.js'];
+const hashes = Object.fromEntries(assetNames.map(name =>
+  [name, createHash('sha1').update(readFileSync(join(root, 'assets', name))).digest('hex').slice(0, 8)]));
+for (const file of ['index.html', ...out]) {
+  const path = join(root, file);
+  const html = readFileSync(path, 'utf8').replace(/(assets\/([\w.-]+\.(?:css|js)))(\?v=\w+)?"/g,
+    (all, ref, name) => hashes[name] ? `${ref}?v=${hashes[name]}"` : all);
+  writeFileSync(path, html);
+}
 
 console.log(out.length + ' páginas:\n' + out.join('\n'));

@@ -753,3 +753,59 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
   #newsPrev { left: calc(50% - 54px) } #newsNext { right: calc(50% - 54px) }
   .news-current { margin-top: 84px }
 }
+
+/* ───────── Calendario: días bloqueados y estadía continua ───────── */
+.cal-grid { gap: 4px 0 }
+.cal-day { display: grid; place-items: center; align-content: center; gap: 1px; height: 50px; margin: 0 2px; line-height: 1 }
+.cal-day b { font: inherit }
+.cal-day small { font-size: 9.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase }
+/* Bloqueados: se pueden tocar para ver el aviso, pero se ven claramente fuera de juego. */
+.cal-day.is-blocked, .cal-day.is-out { cursor: not-allowed }
+.cal-day.is-blocked:hover, .cal-day.is-out:hover { transform: none; border-color: transparent }
+.cal-day.is-past { background: transparent; color: #16302a40 }
+.cal-day.is-full.is-blocked { background: #f1d9d3; color: #9a4b3d; text-decoration: line-through }
+.cal-day.is-out { opacity: .38 }
+/* La estadía es una franja continua: llegada, noches y salida unidas sin huecos. */
+.cal-day.is-range, .cal-day.is-preview { margin: 0; border-radius: 0; background: #cfe0d8; color: var(--forest); border-color: transparent }
+.cal-day.is-start, .cal-day.is-end, .cal-day.is-preview-end { background: var(--forest); color: #fff; border-color: var(--forest); text-decoration: none }
+.cal-day.is-start:has(+ .is-range), .cal-day.is-start:has(+ .is-end), .cal-day.is-start:has(+ .is-preview), .cal-day.is-start:has(+ .is-preview-end) { margin-right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0 }
+.is-range + .cal-day.is-end, .is-start + .cal-day.is-end, .is-preview + .cal-day.is-preview-end, .is-start + .cal-day.is-preview-end { margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0 }
+.cal-day.is-end { background: #2f6150 }
+.cal-day.is-end small, .cal-day.is-start small { color: #e9f2ed }
+/* Mientras se elige la salida, la estadía provisoria se ve punteada. */
+.cal-day.is-tentative.is-range { background: repeating-linear-gradient(135deg, #cfe0d8 0 6px, #dfeae4 6px 12px) }
+.cal-day.is-tentative.is-end { background: #ffffff; color: var(--forest); border: 1.5px dashed var(--forest) }
+.cal-day.is-tentative.is-end small { color: var(--forest) }
+.cal-day.is-preview { background: #cfe0d8 !important }
+.cal-day.is-preview-end { background: var(--forest) !important; color: #fff !important; border-style: solid !important }
+.sw-stay { background: linear-gradient(90deg, var(--forest) 0 35%, #cfe0d8 35%) }
+/* Aviso bajo el calendario: informativo o de advertencia. */
+.cal-note { margin-top: 12px; padding: 0; font-size: 13.5px; line-height: 1.5; color: var(--body) }
+.cal-note[data-state="info"] { padding: 10px 12px; border-radius: 12px; background: #1f4a3d0d; color: var(--forest) }
+.cal-note[data-state="warn"] { padding: 10px 12px; border-radius: 12px; background: #f1d9d3; color: #8b3a2b; animation: faq-open 300ms var(--ease) }
+
+/* ───────── Comprobante de residente: fila propia, compacta, a todo el ancho ───────── */
+.bk-top + .proof { margin-top: 26px; padding: 22px 24px }
+.proof + .bk-block { margin-top: 30px; padding-top: 30px; border-top: 1px solid #16302a0f }
+.proof-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; align-items: center }
+.proof-head .proof-intro { margin: 0; font-size: 13.5px }
+.proof-head .proof-mode, .bk-top .proof-mode { grid-template-columns: 1fr 1fr; margin-top: 0 }
+.proof-mode button { padding: 11px 14px }
+.proof-gate { margin-top: 16px }
+.proof-online:not([hidden]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; margin-top: 18px; align-items: start }
+.proof-side .proof-notice { margin-top: 0; padding: 0; background: none; border: 0 }
+.proof-notice summary { cursor: pointer; list-style: none; font-size: 13.5px; line-height: 1.55; color: var(--body) }
+.proof-notice summary::-webkit-details-marker { display: none }
+.proof-notice summary::after { content: ' Ver detalle'; color: var(--forest); font-weight: 500; text-decoration: underline; text-underline-offset: 3px }
+.proof-notice[open] summary::after { content: ' Ocultar' }
+.proof-notice ul { margin: 8px 0 0; padding: 12px 14px 12px 30px; border-radius: 12px; background: #fff; border: 1px solid #16302a14; font-size: 13px }
+.proof-consent { display: flex; gap: 10px; margin-top: 14px; font-size: 14px; color: var(--ink) }
+.proof-consent span { flex: 1 }
+.proof-side .proof-privacy { margin-top: 10px }
+.proof-main .proof-drop { margin-top: 0; min-height: 112px }
+.proof-main .proof-checks { margin-top: 12px }
+@media (max-width: 760px) {
+  .proof-head, .proof-online:not([hidden]) { grid-template-columns: 1fr }
+  .proof-head .proof-mode { grid-template-columns: 1fr }
+}
+.cal-legend span[hidden] { display: none }

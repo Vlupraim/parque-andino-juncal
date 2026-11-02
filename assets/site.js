@@ -246,24 +246,53 @@ function countUp(el) {
     return n;
   }
   const departure = () => addDays(state.day, state.nights);
-  let pickingEnd = false, rangeNote = '';
+  // Última salida posible: la mañana siguiente a la última noche con cupo seguida.
+  const lastDeparture = () => addDays(state.day, maxNights(state.day));
+  let pickingEnd = false, note = null;
   const fmt = d => `${weekday[d.getDay()]} ${d.getDate()} ${month[d.getMonth()]}`;
+  const blockedReason = d => d <= today ? 'ya no se puede reservar' : closedMonth(d) ? 'el parque está cerrado por la nieve' : 'no tiene cupo';
 
+  // Un día bloqueado nunca se selecciona: se avisa y no cambia nada.
+  // La única excepción es salir la mañana de un día lleno: esa noche no se duerme ahí.
   function pick(d) {
-    rangeNote = '';
+    note = null;
     if (lodging() && pickingEnd && d > state.day) {
-      const wanted = daysBetween(state.day, d), max = maxNights(state.day);
-      state.nights = Math.min(wanted, max);
-      if (wanted > max) rangeNote = `La noche del ${fmt(addDays(state.day, max))} no tiene cupo: tu estadía llega hasta el ${fmt(departure())}.`;
-      pickingEnd = false;
-    } else {
-      state.day = d;
-      if (lodging()) {
-        state.nights = Math.max(1, Math.min(state.nights, maxNights(d)));
-        pickingEnd = true;
+      const limit = lastDeparture();
+      if (d <= limit) {
+        state.nights = daysBetween(state.day, d);
+        pickingEnd = false;
+        return render();
       }
+      // Más allá del límite: si es un día con cupo, se toma como nueva llegada y se explica por qué.
+      const blockedNight = fmt(limit);
+      if (available(d)) {
+        state.day = d;
+        state.nights = 1;
+        note = { warn: true, text: `No se puede extender la estadía hasta el ${fmt(d)}: la noche del ${blockedNight} no tiene cupo. Tomamos el ${fmt(d)} como nueva llegada; ahora toca el día de salida.` };
+      } else {
+        note = { warn: true, text: `El ${fmt(d)} ${blockedReason(d)}, y la noche del ${blockedNight} tampoco tiene cupo. Lo más lejos que puedes salir es el ${blockedNight}.` };
+      }
+      return render();
+    }
+    if (!available(d)) {
+      note = { warn: true, text: `El ${fmt(d)} ${blockedReason(d)}. Elige otro día${lodging() ? ' de llegada' : ''}.` };
+      return render();
+    }
+    state.day = d;
+    if (lodging()) {
+      state.nights = Math.max(1, Math.min(state.nights, maxNights(d)));
+      pickingEnd = true;
     }
     render();
+  }
+
+  // Vista previa del rango mientras se elige la salida.
+  function preview(d) {
+    cal.querySelectorAll('.cal-day').forEach(b => {
+      const t = Number(b.dataset.t);
+      b.classList.toggle('is-preview', d && t > state.day.getTime() && t < d.getTime());
+      b.classList.toggle('is-preview-end', d && t === d.getTime());
+    });
   }
 
   function drawCalendar() {
@@ -272,29 +301,39 @@ function countUp(el) {
     nextBtn.disabled = view >= last;
     const offset = (view.getDay() + 6) % 7, total = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
     cal.innerHTML = ['lu', 'ma', 'mi', 'ju', 'vi', 'sá', 'do'].map(d => `<span class="cal-dow">${d}</span>`).join('') + '<span></span>'.repeat(offset);
-    const end = lodging() ? departure() : null, reach = lodging() && pickingEnd ? maxNights(state.day) : 0;
+    const lod = lodging(), end = lod ? departure() : null, limit = lod && pickingEnd ? lastDeparture() : null;
     for (let n = 1; n <= total; n++) {
       const d = new Date(view.getFullYear(), view.getMonth(), n);
       const b = document.createElement('button');
       b.type = 'button';
-      const inRange = end && d > state.day && d < end, isEnd = end && sameDay(d, end);
-      // Al elegir la salida también se puede tocar un día sin cupo: esa mañana solo se sale, no se duerme.
-      const canEnd = reach && d > state.day && daysBetween(state.day, d) <= reach;
-      b.className = 'cal-day' + (closedMonth(d) ? ' is-closed' : full(d) ? ' is-full' : '') + (sameDay(d, today) ? ' is-today' : '')
-        + (inRange ? ' is-range' : '') + (isEnd ? ' is-end' : '') + (end && sameDay(d, state.day) ? ' is-start' : '');
-      b.textContent = n;
-      b.disabled = !available(d) && !canEnd;
-      b.setAttribute('aria-pressed', sameDay(d, state.day) || !!isEnd);
-      b.setAttribute('aria-label', `${weekday[d.getDay()]} ${n} de ${monthName[d.getMonth()]}${sameDay(d, state.day) && end ? ', llegada' : ''}${isEnd ? ', salida' : ''}${full(d) && !closedMonth(d) ? ', sin cupo' : ''}`);
+      b.dataset.t = d.getTime();
+      const isStart = sameDay(d, state.day), isEnd = lod && sameDay(d, end), inRange = lod && d > state.day && d < end;
+      const endChoice = limit && d > state.day && d <= limit;          // salidas posibles mientras se elige
+      const blocked = !available(d) && !endChoice, out = limit && d > limit;
+      b.className = 'cal-day'
+        + (d <= today ? ' is-past' : closedMonth(d) ? ' is-closed' : full(d) ? ' is-full' : '')
+        + (sameDay(d, today) ? ' is-today' : '') + (blocked ? ' is-blocked' : '') + (out ? ' is-out' : '')
+        + (isStart ? ' is-start' : '') + (inRange ? ' is-range' : '') + (isEnd ? ' is-end' : '') + (pickingEnd ? ' is-tentative' : '');
+      b.innerHTML = `<b>${n}</b>${lod && isStart ? '<small>Llegada</small>' : ''}${isEnd ? '<small>Salida</small>' : ''}`;
+      b.setAttribute('aria-disabled', blocked || !!out);
+      b.setAttribute('aria-pressed', isStart || !!isEnd);
+      b.setAttribute('aria-label', `${weekday[d.getDay()]} ${n} de ${monthName[d.getMonth()]}${lod && isStart ? ', llegada' : ''}${isEnd ? ', salida' : ''}${blocked ? ', ' + blockedReason(d) : ''}`);
       b.addEventListener('click', () => pick(d));
+      if (endChoice) {
+        b.addEventListener('mouseenter', () => preview(d));
+        b.addEventListener('mouseleave', () => preview(null));
+      }
       cal.append(b);
     }
-    document.getElementById('bkDateLabel').textContent = lodging() ? 'Llegada y salida' : 'Día';
-    calNote.textContent = closedMonth(view)
-      ? 'El parque está cerrado de junio a septiembre: la nieve cubre el valle y el camino queda sin mantención.'
-      : rangeNote || (lodging()
-        ? (pickingEnd ? `Llegada el ${fmt(state.day)}. Ahora toca el día de salida.` : `Llegada ${fmt(state.day)} · salida ${fmt(departure())}. Toca otro día para cambiar la llegada.`)
-        : 'De viernes a domingo se ingresa solo con reserva.');
+    document.getElementById('bkDateLabel').textContent = lod ? 'Llegada y salida' : 'Día';
+    document.getElementById('calStay').hidden = !lod;
+    calNote.dataset.state = note?.warn ? 'warn' : lod ? 'info' : '';
+    const nights = state.nights, plural = nights > 1 ? 's' : '';
+    calNote.textContent = note?.text
+      || (closedMonth(view) ? 'El parque está cerrado de junio a septiembre: la nieve cubre el valle y el camino queda sin mantención.'
+      : !lod ? 'De viernes a domingo se ingresa solo con reserva.'
+      : pickingEnd ? `Llegas el ${fmt(state.day)}. Ahora toca el día de salida: puedes quedarte hasta el ${fmt(limit)}${available(limit) ? '' : ' (esa noche no tiene cupo)'}.`
+      : `${nights} noche${plural}: llegas el ${fmt(state.day)} y sales el ${fmt(end)} en la mañana.${available(end) ? '' : ' Ese día no hay cupo para dormir, pero sí puedes salir.'} Toca otro día para cambiar la llegada.`);
   }
   prevBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCalendar(); });
   nextBtn.addEventListener('click', () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCalendar(); });
@@ -307,21 +346,22 @@ function countUp(el) {
     const [key, delta] = b.dataset.step.split(':');
     const [min, max] = limits[key];
     const wanted = Math.min(max, Math.max(min, state[key] + Number(delta)));
-    rangeNote = '';
+    note = null;
     if (key === 'nights') {
       // Las noches siguen el rango del calendario: no se puede sumar una noche sin cupo.
       const fit = maxNights(state.day);
       state.nights = Math.min(wanted, fit);
       pickingEnd = false;
-      if (wanted > fit) rangeNote = `La noche del ${fmt(addDays(state.day, fit))} no tiene cupo: tu estadía llega hasta el ${fmt(departure())}.`;
+      if (wanted > fit) note = { warn: true, text: `No se puede sumar otra noche: la noche del ${fmt(addDays(state.day, fit))} no tiene cupo. Tu estadía llega hasta el ${fmt(departure())}.` };
     } else state[key] = wanted;
     render();
   }));
   form.querySelectorAll('[data-stay]').forEach(b => b.addEventListener('click', () => {
     state.stay = b.dataset.stay;
     form.querySelectorAll('[data-stay]').forEach(x => x.setAttribute('aria-pressed', x === b));
-    rangeNote = '';
-    pickingEnd = false;
+    note = null;
+    // Al pasar a alojamiento, se parte eligiendo la salida desde el día ya marcado.
+    pickingEnd = lodging();
     if (lodging()) state.nights = Math.max(1, Math.min(state.nights, maxNights(state.day)));
     render();
   }));
