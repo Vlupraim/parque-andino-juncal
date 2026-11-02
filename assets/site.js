@@ -289,14 +289,38 @@ function countUp(el) {
     if (!state.resident) proofCheck?.reset();
     render();
   });
+  // Dos caminos para el descuento: subir el comprobante ahora, o acreditarlo en la entrada y pagar allá las entradas.
+  state.proofMode = 'online';
+  form.querySelectorAll('[data-proof-mode]').forEach(b => b.addEventListener('click', () => {
+    state.proofMode = b.dataset.proofMode;
+    form.querySelectorAll('[data-proof-mode]').forEach(x => x.setAttribute('aria-checked', x === b));
+    document.getElementById('proofGate').hidden = state.proofMode !== 'gate';
+    document.getElementById('proofOnline').hidden = state.proofMode === 'gate';
+    if (state.proofMode === 'gate') proofCheck?.reset();
+    render();
+  }));
+
+  // Montos separados: entradas y alojamiento. En modo "en la entrada", las entradas se pagan en el parque.
+  function amounts() {
+    const { adults, kids, nights, stay } = state;
+    let lodging = 0;
+    if (stay === 'hornitos') lodging = (adults * 5000 + kids * 2500) * nights;
+    if (stay === 'morrenas') lodging = (adults * 3500 + kids * 2500) * nights;
+    if (stay === 'refugio') lodging = Math.ceil((adults + kids) / 3) * 50000 * nights;
+    const gate = state.resident && state.proofMode === 'gate';
+    const discount = state.resident && state.proofMode === 'online' && state.proofOk;
+    const entries = adults * 8000 * (discount ? .75 : 1) + kids * 4000;
+    return {
+      gate, discount, lodging,
+      payNow: gate ? lodging : entries + lodging,
+      atGateResident: adults * 6000 + kids * 4000,
+      atGateFull: adults * 8000 + kids * 4000
+    };
+  }
 
   function render() {
     const { adults, kids, nights, stay } = state;
-    const resident = state.resident && state.proofOk;
-    let total = adults * 8000 * (resident ? .75 : 1) + kids * 4000;
-    if (stay === 'hornitos') total += (adults * 5000 + kids * 2500) * nights;
-    if (stay === 'morrenas') total += (adults * 3500 + kids * 2500) * nights;
-    if (stay === 'refugio') total += Math.ceil((adults + kids) / 3) * 50000 * nights;
+    const a = amounts();
     document.getElementById('bkAdults').textContent = adults;
     document.getElementById('bkKids').textContent = kids;
     document.getElementById('bkNightsOut').textContent = nights;
@@ -304,11 +328,66 @@ function countUp(el) {
     const people = `${adults} adulto${adults > 1 ? 's' : ''}` + (kids ? ` y ${kids} niño${kids > 1 ? 's' : ''}` : '');
     const when = state.day ? `${weekday[state.day.getDay()]} ${state.day.getDate()} ${month[state.day.getMonth()]}` : '';
     const sleep = stay === 'day' ? names.day : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;
-    document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}${resident ? ' · 25% residente' : ''}`;
-    document.getElementById('bkTotal').textContent = clp(total);
+    document.getElementById('bkSummary').textContent = `${when} · ${people} · ${sleep}${a.discount ? ' · 25% residente' : ''}`;
+    document.getElementById('bkPayLabel').textContent = a.gate ? 'Pagas hoy' : 'Total';
+    document.getElementById('bkTotal').textContent = clp(a.payNow);
+    const gateLine = document.getElementById('bkGate');
+    gateLine.hidden = !a.gate;
+    gateLine.innerHTML = `En la entrada: <b>${clp(a.atGateResident)}</b> acreditando residencia, o ${clp(a.atGateFull)} sin acreditar.`;
+    document.querySelector('#bkSubmit .magnetic-label').textContent = a.payNow ? 'Continuar al pago' : 'Reservar y recibir ticket';
+    return { when, people, sleep };
   }
   render();
+
+  // Al confirmar se emite el ticket de reserva. El pago en línea está simulado hasta conectar Webpay o Mercado Pago.
+  const dialog = document.getElementById('ticketDialog'), ticket = document.getElementById('ticket');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const a = amounts(), { people, sleep } = render();
+    const code = 'PAJ-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + String(state.day.getDate()).padStart(2, '0') + String(state.day.getMonth() + 1).padStart(2, '0');
+    const fullDate = `${['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'][state.day.getDay()]} ${state.day.getDate()} de ${monthName[state.day.getMonth()]} de ${state.day.getFullYear()}`;
+    const paid = a.payNow ? `<div class="t-row"><span>Pagado en línea</span><b>${clp(a.payNow)}</b></div>` : '';
+    const atGate = a.gate
+      ? `<div class="t-row t-gate"><span>A pagar en la entrada</span><b>${clp(a.atGateResident)}</b></div><p class="t-small">Con 25% en la entrada adulto si acreditas residencia. Sin acreditar: ${clp(a.atGateFull)}.</p>`
+      : '';
+    const bring = a.gate
+      ? '<li>Tu carnet y un documento con tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares.</li>'
+      : a.discount ? '<li>Tu carnet, para confirmar el descuento de residente.</li>' : '';
+    ticket.innerHTML = `
+      <header class="t-head"><img src="assets/logo-juncal-negro.svg" alt="Parque Andino Juncal"><span>Ticket de reserva</span></header>
+      <h3 id="ticketTitle">${fullDate}</h3>
+      <div class="t-body">
+        <div class="t-info">
+          <div class="t-row"><span>Visitantes</span><b>${people}</b></div>
+          <div class="t-row"><span>Alojamiento</span><b>${sleep}</b></div>
+          ${paid}${atGate}
+        </div>
+        <div class="t-qr"><div id="ticketQr"></div><code>${code}</code></div>
+      </div>
+      <div class="t-cut" aria-hidden="true"></div>
+      <h4>Para entrar</h4>
+      <ul class="t-list"><li>Presenta este código en la barrera de Los Hornitos.</li>${bring}<li>Horario: lunes a viernes de 8:00 a 20:00; sábado y domingo de 7:00 a 20:00.</li></ul>
+      <p class="t-small">Maqueta: el pago en línea y el envío por correo todavía no están conectados.</p>`;
+    dialog.showModal();
+    try {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
+      const qr = window.qrcode(0, 'M');
+      qr.addData(code);
+      qr.make();
+      document.getElementById('ticketQr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    } catch { document.getElementById('ticketQr').textContent = code; }
+  });
+  document.getElementById('ticketClose').addEventListener('click', () => dialog.close());
+  document.getElementById('ticketPrint').addEventListener('click', () => window.print());
+  dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
 })();
+
+function loadScript(src) {
+  return new Promise((ok, fail) => {
+    if ([...document.scripts].some(s => s.src === src)) return ok();
+    document.head.append(Object.assign(document.createElement('script'), { src, onload: ok, onerror: fail }));
+  });
+}
 
 // Comprobante de residencia, analizado en el navegador (sin subir la imagen a ningún servidor):
 // 1) resolución, 2) nitidez (varianza del laplaciano), 3) iluminación, 4) OCR con Tesseract para encontrar

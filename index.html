@@ -213,7 +213,16 @@
           <label class="check"><input type="checkbox" id="bkResident" aria-controls="bkProof"> Somos residentes de San Felipe o Los Andes</label>
         </div>
         <div class="proof" id="bkProof" hidden>
-          <p class="proof-intro"><b>25% de descuento en la entrada adulto.</b> Sube una foto de un documento con tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
+          <p class="proof-intro"><b>25% de descuento en la entrada adulto.</b> Se acredita con un documento que muestre tu domicilio: certificado de residencia, cuenta de luz o agua, o cartola del Registro Social de Hogares. El carnet no sirve, porque no indica dónde vives.</p>
+          <div class="proof-mode" role="radiogroup" aria-label="Cómo acreditar la residencia">
+            <button type="button" data-proof-mode="online" role="radio" aria-checked="true"><b>Subir comprobante ahora</b><small>Pagas todo en línea, con el descuento</small></button>
+            <button type="button" data-proof-mode="gate" role="radio" aria-checked="false"><b>Acreditar en la entrada</b><small>Reservas el día y pagas las entradas allá</small></button>
+          </div>
+          <div class="proof-gate" id="proofGate" hidden>
+            <p>Reserva tu día ahora y paga las entradas al llegar. Muestra al guardaparque <b>tu carnet y un documento con tu domicilio</b>: con eso se aplica el 25% en la entrada adulto. Si no lo llevas, pagas la entrada normal.</p>
+            <p>Si eliges alojamiento, ese monto sí se paga en línea para asegurar tu cupo. Recibirás un <b>ticket de reserva</b> con código QR para presentar en la entrada.</p>
+          </div>
+          <div class="proof-online" id="proofOnline">
           <div class="proof-notice">
             <p><b>Cómo tratamos esta foto.</b> El documento muestra datos personales, como tu nombre y tu dirección. Lo usamos <b>solo para verificar que vives en una comuna con descuento</b>, y nada más.</p>
             <ul>
@@ -237,7 +246,8 @@
           </ul>
           <p class="proof-status" id="proofStatus" aria-live="polite"></p>
           <button class="proof-delete" type="button" id="proofDelete" hidden>Eliminar foto y resultado</button>
-          <p class="proof-privacy">El guardaparque confirmará el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
+          </div>
+          <p class="proof-privacy">El guardaparque confirma el descuento con tu carnet al llegar, sin fotocopiarlo ni guardarlo.</p>
         </div>
       </div>
       <div class="bk-block">
@@ -251,12 +261,19 @@
         <div class="nights counter" id="bkNights" hidden><span>Noches</span><button type="button" data-step="nights:-1" aria-label="Menos noches">−</button><output id="bkNightsOut">1</output><button type="button" data-step="nights:1" aria-label="Más noches">+</button></div>
       </div>
       <div class="bk-total">
-        <div><small id="bkSummary">2 adultos · solo el día</small><strong id="bkTotal">$16.000</strong></div>
-        <button class="button dark" type="submit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
+        <div><small id="bkSummary">2 adultos · solo el día</small><small class="bk-paylabel" id="bkPayLabel">Total</small><strong id="bkTotal">$16.000</strong><small class="bk-gate" id="bkGate" hidden></small></div>
+        <button class="button dark" type="submit" id="bkSubmit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
       </div>
       <p class="bk-foot">Pago con Webpay o Mercado Pago. Tu entrada llega al correo con un código QR.</p>
       <p class="data-note">Usamos tus datos solo para gestionar tu reserva y tu ingreso al parque, conforme a la Ley 21.719. <a href="privacidad.html">Cómo tratamos tus datos</a>.</p>
     </form>
+    <dialog class="ticket-dialog" id="ticketDialog" aria-labelledby="ticketTitle">
+      <article class="ticket" id="ticket"></article>
+      <div class="ticket-actions">
+        <button class="button dark" type="button" id="ticketPrint">Imprimir o guardar PDF</button>
+        <button class="text-link" type="button" id="ticketClose">Cerrar</button>
+      </div>
+    </dialog>
   </div>
 </section>
 

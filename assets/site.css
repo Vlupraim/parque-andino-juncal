@@ -645,3 +645,60 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
 .prose table { width: 100%; border-collapse: collapse; font-size: 15px }
 .prose th, .prose td { padding: 12px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid #16302a1a }
 .prose th { font-weight: 600; color: var(--ink); background: #16302a08 }
+
+/* ───────── Residentes: comprobante ahora o en la entrada ───────── */
+.proof-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px }
+.proof-mode button { padding: 14px 16px; border-radius: 14px; border: 1px solid #16302a1f; background: #fff; text-align: left; font: inherit; color: var(--ink); cursor: pointer; transition: border-color .2s, box-shadow .2s, background .2s }
+.proof-mode button b { display: block; font-size: 15px }
+.proof-mode button small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--body) }
+.proof-mode button[aria-checked="true"] { border-color: var(--forest); box-shadow: inset 0 0 0 1px var(--forest); background: #1f4a3d0a }
+.proof-gate { margin-top: 14px; padding: 16px 18px; border-radius: 14px; background: #fff; border: 1px solid #16302a14; font-size: 14px; line-height: 1.6; color: var(--body) }
+.proof-gate[hidden], .proof-online[hidden] { display: none }
+.proof-gate p + p { margin-top: 8px }
+.proof-gate b { color: var(--ink) }
+.bk-total small { display: block }
+.bk-paylabel { margin-top: 6px; font-size: 12px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--ochre) !important }
+.bk-gate { margin-top: 8px; max-width: 46ch; font-size: 13.5px !important; line-height: 1.5 }
+.bk-gate[hidden] { display: none }
+.bk-gate b { color: var(--forest) }
+
+/* ───────── Ticket de reserva ───────── */
+.ticket-dialog { width: min(560px, calc(100% - 24px)); padding: 0; border: 0; border-radius: 26px; background: transparent; overflow: visible }
+.ticket-dialog::backdrop { background: #0b1f1acc; backdrop-filter: blur(4px) }
+.ticket-dialog[open] { animation: ticket-in 520ms var(--ease) }
+@keyframes ticket-in { from { opacity: 0; transform: translateY(24px) scale(.97) } }
+.ticket { padding: 28px 30px 24px; border-radius: 26px; background: #fffdf8; color: var(--ink); box-shadow: 0 40px 80px -40px #000 }
+.t-head { display: flex; justify-content: space-between; align-items: center; gap: 16px }
+.t-head img { height: 52px; width: auto }
+.t-head span { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ochre) }
+.ticket h3 { margin-top: 18px; font-size: 30px; line-height: 1.15; text-transform: none }
+.t-body { display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: start; margin-top: 16px }
+.t-row { display: flex; justify-content: space-between; gap: 14px; padding: 9px 0; border-bottom: 1px solid #16302a14; font-size: 14.5px }
+.t-row span { color: var(--body) }
+.t-row b { text-align: right }
+.t-gate b { color: var(--forest); font-size: 17px }
+.t-small { margin-top: 8px; font-size: 12.5px; line-height: 1.5; color: var(--body) }
+.t-qr { display: grid; justify-items: center; gap: 8px }
+.t-qr #ticketQr { width: 128px; height: 128px; display: grid; place-items: center; padding: 8px; border-radius: 12px; background: #fff; border: 1px solid #16302a1a }
+.t-qr svg { width: 100%; height: 100% }
+.t-qr code { font: 600 13px/1 ui-monospace, monospace; letter-spacing: .06em; color: var(--forest) }
+.t-cut { position: relative; height: 0; margin: 22px -30px 18px; border-top: 2px dashed #16302a26 }
+.t-cut::before, .t-cut::after { content: ''; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 50%; background: #0b1f1a }
+.t-cut::before { left: -12px } .t-cut::after { right: -12px }
+.ticket h4 { font: 600 12px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ochre) }
+.t-list { margin: 8px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.6; color: var(--body) }
+.t-list li + li { margin-top: 4px }
+.ticket-actions { display: flex; justify-content: center; align-items: center; gap: 22px; margin-top: 16px }
+.ticket-actions .text-link { background: none; border: 0; border-bottom: 1px solid #fff; color: #fff; cursor: pointer; font: 500 15px var(--sans) }
+@media (max-width: 560px) {
+  .proof-mode { grid-template-columns: 1fr }
+  .t-body { grid-template-columns: 1fr } .t-qr { justify-items: start }
+  .ticket { padding: 22px 20px } .t-cut { margin-inline: -20px }
+}
+/* Al imprimir solo sale el ticket. */
+@media print {
+  body > *:not(main), main > *:not(#reservar), #reservar .wrap > *:not(.ticket-dialog) { display: none !important }
+  #reservar { padding: 0 !important }
+  .ticket-dialog { position: static; width: 100%; box-shadow: none } .ticket-dialog::backdrop { display: none }
+  .ticket { box-shadow: none; border: 1px solid #ccc } .ticket-actions, .t-cut::before, .t-cut::after { display: none }
+}
