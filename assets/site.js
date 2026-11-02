@@ -675,28 +675,50 @@ function checkResidence(onResult) {
   const hero = document.querySelector('.hero');
   const photos = hero ? [...hero.querySelectorAll('.hero-photo')] : [];
   if (photos.length < 2) return;
-  const dots = hero.querySelector('.hero-dots'), caption = document.getElementById('caption');
+  const controls = hero.querySelector('.hero-controls'), dots = hero.querySelector('.hero-dots'), caption = document.getElementById('caption');
   const toggle = hero.querySelector('.hero-motion-toggle');
   const hold = 6500, fade = 1800;
-  photos.forEach(() => dots.append(document.createElement('span')));
+  controls.style.setProperty('--slide', hold + fade + 'ms');
+  // Un segmento por foto: el activo se llena mientras dura; al hacer clic se muestra esa foto y queda fija.
+  photos.forEach((photo, i) => {
+    const b = Object.assign(document.createElement('button'), { type: 'button' });
+    b.setAttribute('aria-label', `Ver foto ${i + 1}: ${photo.dataset.caption}`);
+    b.addEventListener('click', () => {
+      if (i !== index) show(i);
+      setPaused(true);
+    });
+    dots.append(b);
+  });
   let index = 0, paused = false, timer = null;
   const zooms = photos.map(p => p.animate([{ transform: 'scale(1.005)' }, { transform: 'scale(1.025)' }],
     { duration: 33000, iterations: Infinity, direction: 'alternate', easing: 'ease-in-out' }));
+  function mark() {
+    [...dots.children].forEach((d, i) => {
+      d.classList.remove('on');
+      d.setAttribute('aria-current', i === index);
+    });
+    void dots.offsetWidth; // reinicia la barra de progreso del segmento activo
+    dots.children[index].classList.add('on');
+  }
   function show(next) {
     photos[index].animate([{ opacity: 1 }, { opacity: 0 }], { duration: fade, easing: 'ease-in-out', fill: 'forwards' });
     photos[next].animate([{ opacity: 0 }, { opacity: 1 }], { duration: fade, easing: 'ease-in-out', fill: 'forwards' });
     index = next;
     caption.textContent = photos[index].dataset.caption;
-    [...dots.children].forEach((d, i) => d.classList.toggle('on', i === index));
+    mark();
   }
   function schedule() { clearTimeout(timer); if (!paused) timer = setTimeout(() => { show((index + 1) % photos.length); schedule(); }, hold + fade); }
-  dots.children[0].classList.add('on');
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { zooms.forEach(a => a.cancel()); toggle.hidden = true; return; }
-  toggle.addEventListener('click', () => {
-    paused = !paused;
+  function setPaused(value) {
+    paused = value;
+    controls.classList.toggle('is-paused', paused);
     toggle.setAttribute('aria-pressed', paused);
+    toggle.setAttribute('aria-label', paused ? 'Reanudar fotos' : 'Pausar fotos');
     zooms.forEach(a => paused ? a.pause() : a.play());
+    if (!paused) mark();
     schedule();
-  });
+  }
+  mark();
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { zooms.forEach(a => a.cancel()); setPaused(true); return; }
+  toggle.addEventListener('click', () => setPaused(!paused));
   schedule();
 })();

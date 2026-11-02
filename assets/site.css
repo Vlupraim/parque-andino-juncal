@@ -702,3 +702,22 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
   .ticket-dialog { position: static; width: 100%; box-shadow: none } .ticket-dialog::backdrop { display: none }
   .ticket { box-shadow: none; border: 1px solid #ccc } .ticket-actions, .t-cut::before, .t-cut::after { display: none }
 }
+
+/* ───────── Hero: segmentos de fotos y pausa, a la derecha ───────── */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
+.hero-controls { position: absolute; z-index: 2; right: max(48px, calc((100% - 1200px) / 2)); bottom: 124px; display: flex; flex-direction: column; align-items: flex-end; gap: 12px }
+.hero-controls .hero-motion-toggle { position: static }
+.hero-dots { display: flex; gap: 2px }
+.hero-dots button { position: relative; width: 40px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer }
+.hero-dots button::before, .hero-dots button::after { content: ''; position: absolute; left: 3px; top: 11px; height: 2px; border-radius: 2px; transition: top .2s, height .2s, background .2s }
+.hero-dots button::before { right: 3px; background: #ffffff59 }
+.hero-dots button::after { width: 0; background: #fff }
+.hero-dots button:hover::before, .hero-dots button:hover::after, .hero-dots button:focus-visible::before, .hero-dots button:focus-visible::after { top: 10px; height: 4px }
+.hero-dots button:hover::before { background: #ffffffa6 }
+.hero-dots button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 4px }
+/* El segmento activo se llena mientras dura la foto; en pausa queda completo. */
+.hero-dots button.on::after { animation: dot-fill var(--slide, 8300ms) linear forwards }
+.hero-controls.is-paused .hero-dots button.on::after { animation: none; width: calc(100% - 6px) }
+@keyframes dot-fill { to { width: calc(100% - 6px) } }
+@media (max-width: 900px) { .hero-controls { right: 20px; bottom: 80px } }
+@media (prefers-reduced-motion: reduce) { .hero-dots button.on::after { animation: none; width: calc(100% - 6px) } }
