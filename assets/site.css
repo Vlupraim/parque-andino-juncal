@@ -386,8 +386,6 @@ h2 { font-size: clamp(32px, 3.6vw, 50px); line-height: 1.12; letter-spacing: -.0
 @media (max-width: 900px) {
   .wrap, .nav-inner { width: calc(100% - 40px) }
   .nav-links, .nav-cta { display: none }
-  .menu-toggle { display: grid; margin-left: auto; width: 44px; height: 44px; place-items: center; border: 0; background: none; color: #fff; font-size: 22px }
-  .on-light .menu-toggle { color: var(--ink) }
   .pillbar.nav-detached { top: 12px; width: calc(100% - 24px) }
   .g2, .g3, .g4, .split, .booking, .stats, .sitemap { grid-template-columns: 1fr }
   .rules { grid-template-columns: repeat(3, 1fr) }
@@ -535,4 +533,47 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
   .footer-cta { flex-direction: column; align-items: flex-start }
   .press-item { grid-template-columns: 1fr; gap: 8px }
   .figure { margin-inline: 0 }
+}
+
+/* ───────── Menú en celulares ───────── */
+.mobile-menu { display: none }
+@media (max-width: 900px) {
+  .menu-toggle { position: relative; display: block; flex: 0 0 44px; margin-left: auto; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: none; color: #fff; cursor: pointer; transition: color .3s, background .3s }
+  .menu-toggle span { position: absolute; left: 12px; right: 12px; height: 1.6px; border-radius: 2px; background: currentColor; transition: transform 380ms var(--ease), top 380ms var(--ease) }
+  .menu-toggle span:first-child { top: 17px } .menu-toggle span:last-child { top: 25px }
+  .menu-toggle[aria-expanded="true"] span:first-child { top: 21px; transform: rotate(45deg) }
+  .menu-toggle[aria-expanded="true"] span:last-child { top: 21px; transform: rotate(-45deg) }
+  .on-light .menu-toggle, .menu-open .menu-toggle { color: var(--ink) }
+
+  /* Con el menú abierto, la barra pasa a vidrio claro aunque esté sobre la foto. */
+  .pillbar.menu-open .glass-bg { background: rgb(246 244 238 / 94%); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px) }
+  .pillbar.menu-open .brand-logo { color: var(--ink) }
+  .pillbar.menu-open::before { opacity: 1 }
+
+  .mobile-menu { display: block; position: fixed; z-index: 99; left: 12px; right: 12px; top: calc(var(--bar-bottom, 72px) + 8px);
+    max-height: calc(100dvh - var(--bar-bottom, 72px) - 24px); overflow-y: auto; overscroll-behavior: contain;
+    padding: 10px 22px 22px; border-radius: 26px; background: rgb(250 248 242 / 97%); border: 1px solid #ffffffcc;
+    backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); box-shadow: 0 30px 60px -30px #0b1f1a80;
+    opacity: 0; visibility: hidden; transform: translateY(-12px) scale(.98); transform-origin: 50% 0;
+    transition: opacity 320ms var(--ease), transform 420ms var(--ease), visibility 0s 420ms }
+  .mobile-menu.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity 320ms var(--ease), transform 420ms var(--ease) }
+  .mobile-menu > * { opacity: 0; transform: translateY(8px); transition: opacity 300ms, transform 420ms var(--ease) }
+  .mobile-menu.is-open > * { opacity: 1; transform: none; transition-delay: calc(var(--i) * 45ms + 60ms) }
+  .mm-link, .mm-group > summary { display: flex; justify-content: space-between; align-items: center; padding: 14px 2px; border-bottom: 1px solid #16302a14;
+    font: 500 26px/1.2 var(--serif); color: var(--ink); cursor: pointer; list-style: none }
+  .mm-group > summary::-webkit-details-marker { display: none }
+  .mm-group > summary::after { content: ''; width: 9px; height: 9px; border-right: 1.5px solid var(--forest); border-bottom: 1.5px solid var(--forest); transform: rotate(45deg) translateY(-3px); transition: transform .3s var(--ease) }
+  .mm-group[open] > summary::after { transform: rotate(225deg) }
+  .mm-group[open] > summary { border-bottom-color: transparent }
+  .mm-sub { display: grid; padding: 0 0 12px 2px; border-bottom: 1px solid #16302a14 }
+  .mm-group[open] .mm-sub { animation: faq-open 380ms var(--ease) }
+  .mm-sub a { padding: 10px 0 10px 14px; border-left: 1.5px solid #b8863b66; font-size: 16px; color: var(--body) }
+  .mm-sub a:active, .mm-link:active { color: var(--forest) }
+  .mm-cta { display: flex; width: 100%; justify-content: center; margin-top: 22px }
+  .mm-foot { margin-top: 16px; text-align: center; font-size: 14px; color: var(--body) }
+  .mm-foot a { color: var(--forest) }
+  body.menu-locked { overflow: hidden }
+}
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+  .mobile-menu, .mobile-menu > *, .menu-toggle span { transition: none }
 }

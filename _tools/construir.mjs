@@ -57,7 +57,7 @@ export const header = p => `<header class="pillbar nav-anchored" id="mainNav">
       <details class="nav-dropdown"><summary>Apoya<span class="nav-chevron"></span></summary><div class="nav-dropdown-panel"><a href="${p}apoya.html#donacion">Donación</a><a href="${p}apoya.html#voluntariado">Voluntariado</a></div></details>
     </nav>
     <a href="${p}index.html#reservar" class="nav-cta" data-magnetic><span class="magnetic-label">Reservar visita</span></a>
-    <button class="menu-toggle" aria-label="Menú">☰</button>
+    <button class="menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span></button>
   </div>
 </header>`;
 

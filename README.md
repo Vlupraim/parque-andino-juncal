@@ -45,4 +45,4 @@ Tipografías: EB Garamond y Montserrat (licencia SIL OFL), en `_tools/fonts`.
 
 ## Pendiente
 
-Las fotos son las del sitio actual, enlazadas desde parqueandinojuncal.cl. Los cupos del calendario de reserva son de ejemplo y el pago todavía no está conectado. El menú en celulares aún no se abre.
+Las fotos son las del sitio actual, enlazadas desde parqueandinojuncal.cl. Los cupos del calendario de reserva son de ejemplo y el pago todavía no está conectado.

@@ -30,8 +30,9 @@
   }
   addEventListener('pageshow', e => { if (e.persisted) uncover(); });
 
+  const samePage = path => path.replace(/index\.html$/, '') === location.pathname.replace(/index\.html$/, '');
   const internal = a => a && a.href && a.origin === location.origin && !a.target && !a.hasAttribute('download')
-    && !(a.pathname === location.pathname && a.hash);
+    && !(samePage(a.pathname) && a.hash);
   window.irA = href => {
     const url = new URL(href, location.href);
     if (url.origin !== location.origin) return void (location.href = url.href);
@@ -80,6 +81,49 @@
   addEventListener('scroll', () => { if (frame === null) frame = requestAnimationFrame(update); }, { passive: true });
   nav.addEventListener('animationend', e => { if (e.animationName === 'nav-release') nav.classList.remove('nav-releasing'); });
   update();
+})();
+
+// Menú en celulares: se arma con los mismos enlaces de la barra; los grupos se abren de a uno.
+(() => {
+  const nav = document.getElementById('mainNav'), toggle = nav.querySelector('.menu-toggle');
+  if (!toggle) return;
+  const menu = document.createElement('div');
+  menu.className = 'mobile-menu';
+  menu.id = 'mobileMenu';
+  let i = 0;
+  for (const item of nav.querySelectorAll('.nav-links > *')) {
+    if (item.matches('details')) {
+      const group = document.createElement('details');
+      group.className = 'mm-group';
+      group.name = 'mm';
+      group.innerHTML = `<summary>${item.querySelector('summary').textContent}</summary><div class="mm-sub">${
+        [...item.querySelectorAll('.nav-dropdown-panel a')].map(a => `<a href="${a.getAttribute('href')}">${a.textContent}</a>`).join('')}</div>`;
+      group.style.setProperty('--i', i++);
+      menu.append(group);
+    } else {
+      const link = Object.assign(document.createElement('a'), { className: 'mm-link', href: item.getAttribute('href'), textContent: item.textContent });
+      link.style.setProperty('--i', i++);
+      menu.append(link);
+    }
+  }
+  const cta = nav.querySelector('.nav-cta');
+  menu.insertAdjacentHTML('beforeend', `<a class="button dark mm-cta" href="${cta.getAttribute('href')}" style="--i:${i++}">Reservar visita</a>
+    <p class="mm-foot" style="--i:${i}"><a href="mailto:info@parqueandinojuncal.cl">info@parqueandinojuncal.cl</a></p>`);
+  nav.after(menu);
+
+  function setOpen(open) {
+    if (open) document.documentElement.style.setProperty('--bar-bottom', nav.getBoundingClientRect().bottom + 'px');
+    menu.classList.toggle('is-open', open);
+    nav.classList.toggle('menu-open', open);
+    document.body.classList.toggle('menu-locked', open);
+    toggle.setAttribute('aria-expanded', open);
+    toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+  }
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  menu.addEventListener('click', e => { if (e.target.closest('a')) setOpen(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  document.addEventListener('click', e => { if (!menu.contains(e.target) && !nav.contains(e.target)) setOpen(false); });
+  matchMedia('(min-width: 901px)').addEventListener('change', e => { if (e.matches) setOpen(false); });
 })();
 
 // Menús: se abren al pasar el mouse y nunca hay dos abiertos a la vez. El teclado y el toque siguen usando clic.
