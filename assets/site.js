@@ -585,74 +585,78 @@ function checkResidence(onResult) {
   return { reset };
 }
 
-// Noticias: pila de fotos que rota sola mientras se ve; con el mouse encima se abre en abanico y se detiene.
+// Noticias: carrusel circular. La actual al centro y dos a cada lado, más chicas y hacia atrás.
+// Clic en una lateral la trae al centro; clic en la del centro abre la noticia. Avanza solo mientras se ve.
 // Los datos vienen de assets/noticias-data.js (noticias reales y prensa del sitio original).
 (() => {
-  const stack = document.getElementById('newsStack');
-  if (!stack || !window.NOTICIAS) return;
-  const items = window.NOTICIAS.map(n => [n.fecha, n.titulo, n.resumen, n.foto, n.pos || 'center', n.href]);
-  const cards = items.map(([date, , , image, pos], i) => {
-    const card = document.createElement('article');
+  const track = document.getElementById('newsStack');
+  if (!track || !window.NOTICIAS) return;
+  const items = window.NOTICIAS;
+  const info = document.getElementById('newsCurrent'), count = document.getElementById('newsCount');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let current = 0, visible = false, hovering = false, timer = null;
+
+  const cards = items.map((n, i) => {
+    const card = document.createElement('button');
+    card.type = 'button';
     card.className = 'news-card';
-    card.style.backgroundImage = `url('${image}')`;
-    card.style.backgroundPosition = pos;
-    card.innerHTML = `<span>${date}</span>`;
-    card.dataset.index = i;
-    stack.append(card);
+    card.style.backgroundImage = `url('${n.foto}')`;
+    card.style.backgroundPosition = n.pos || 'center';
+    card.innerHTML = `<span>${n.fecha}</span>`;
+    card.addEventListener('click', () => (i === current ? window.irA(n.href) : go(i)));
+    track.append(card);
     return card;
   });
-  let order = cards.map((_, i) => i), fanned = false, visible = false, timer = null, busy = false;
-  const info = document.getElementById('newsCurrent'), count = document.getElementById('newsCount');
 
   function layout() {
-    order.forEach((index, depth) => {
-      const card = cards[index];
-      // La de adelante mira de frente; las siguientes se apilan hacia la derecha, giradas hacia ella.
-      // Con el mouse encima se separan un poco más para dejar ver cada foto.
-      const x = depth === 0 ? 0 : (fanned ? 46 : 38) + (depth - 1) * (fanned ? 16 : 12);
-      card.style.transform = depth === 0
-        ? 'translateX(0) translateZ(0) rotateY(0deg)'
-        : `translateX(${x}%) translateZ(${-90 - depth * 70}px) rotateY(${fanned ? -34 : -44}deg)`;
-      card.style.zIndex = 20 - depth;
-      card.style.opacity = depth > 4 ? 0 : 1;
-      card.style.filter = `brightness(${1 - Math.min(depth, 4) * .12}) saturate(${depth ? .85 : 1})`;
+    const total = items.length;
+    cards.forEach((card, i) => {
+      // Distancia circular al centro: -4..3 con 8 noticias.
+      const k = ((i - current + total + Math.floor(total / 2)) % total) - Math.floor(total / 2);
+      const d = Math.abs(k), shown = d <= 2;
+      card.style.transform = `translate(-50%, -50%) translateX(${k * 58}%) scale(${1 - d * .17}) rotateY(${-Math.sign(k) * Math.min(d, 2) * 9}deg)`;
+      card.style.zIndex = 10 - d;
+      card.style.opacity = shown ? 1 : 0;
+      card.style.filter = `brightness(${1 - Math.min(d, 2) * .2}) saturate(${d ? .85 : 1})`;
+      card.style.pointerEvents = shown ? 'auto' : 'none';
+      card.tabIndex = shown ? 0 : -1;
+      card.setAttribute('aria-label', i === current ? `Abrir: ${items[i].titulo}` : `Ver noticia: ${items[i].titulo}`);
+      card.classList.toggle('is-current', i === current);
     });
-    const [date, title, text, , , href] = items[order[0]];
-    info.innerHTML = `<time>${date}</time><h3>${title}</h3><p>${text}</p><a class="text-link" href="${href}">Leer más →</a>`;
+    const n = items[current];
+    info.innerHTML = `<time>${n.fecha}</time><h3>${n.titulo}</h3><p>${n.resumen}</p><a class="text-link" href="${n.href}">Leer más →</a>`;
     info.classList.remove('swap'); void info.offsetWidth; info.classList.add('swap');
-    count.textContent = `${String(order[0] + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`;
+    count.textContent = `${String(current + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
   }
-  function next() {
-    if (busy) return;
-    busy = true;
-    const top = cards[order[0]];
-    top.classList.add('leaving');
-    setTimeout(() => {
-      top.classList.remove('leaving');
-      order.push(order.shift());
-      layout();
-      busy = false;
-    }, 520);
-  }
-  function prev() { order.unshift(order.pop()); layout(); }
-  function schedule() {
-    clearInterval(timer);
-    if (visible && !fanned && !matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(next, 4200);
-  }
-  stack.addEventListener('pointerenter', () => { if (matchMedia('(hover: hover)').matches) { fanned = true; layout(); schedule(); } });
-  stack.addEventListener('pointerleave', () => { fanned = false; layout(); schedule(); });
-  stack.addEventListener('click', e => {
-    const card = e.target.closest('.news-card');
-    if (!card) return;
-    const i = Number(card.dataset.index);
-    // La foto de arriba abre la noticia; las de atrás pasan al frente.
-    if (i === order[0]) return window.irA(items[i][5]);
-    order = [...order.slice(order.indexOf(i)), ...order.slice(0, order.indexOf(i))];
+  function go(i) {
+    current = (i + items.length) % items.length;
     layout();
+    schedule();
+  }
+  function schedule() {
+    clearTimeout(timer);
+    if (visible && !hovering && !reduced) timer = setTimeout(() => go(current + 1), 4800);
+  }
+
+  document.getElementById('newsNext').addEventListener('click', () => go(current + 1));
+  document.getElementById('newsPrev').addEventListener('click', () => go(current - 1));
+  const carousel = track.closest('.news-carousel');
+  carousel.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hovering = true; schedule(); } });
+  carousel.addEventListener('pointerleave', () => { hovering = false; schedule(); });
+  carousel.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(current + 1);
+    if (e.key === 'ArrowLeft') go(current - 1);
   });
-  document.getElementById('newsNext').addEventListener('click', () => { next(); schedule(); });
-  document.getElementById('newsPrev').addEventListener('click', () => { prev(); schedule(); });
-  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: .3 }).observe(stack);
+  // Deslizar con el dedo en pantallas táctiles.
+  let startX = null;
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) go(current + (dx < 0 ? 1 : -1));
+    startX = null;
+  });
+  new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; schedule(); }, { threshold: .35 }).observe(track);
   layout();
 })();
 

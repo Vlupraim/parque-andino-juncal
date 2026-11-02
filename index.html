@@ -309,20 +309,20 @@
   </div>
 </section>
 
-<!-- 8. Noticias: pila que rota -->
+<!-- 8. Noticias: carrusel circular al ancho -->
 <section class="news" id="noticias">
-  <div class="wrap news-layout">
-    <div class="news-info">
+  <div class="wrap">
+    <div class="center-head">
       <p class="eyebrow" data-reveal>Noticias</p>
       <h2 data-reveal style="--d:80ms">Desde el parque</h2>
-      <div class="news-current" id="newsCurrent" aria-live="polite"></div>
-      <div class="news-controls">
-        <button type="button" id="newsPrev" aria-label="Noticia anterior">←</button>
-        <button type="button" id="newsNext" aria-label="Noticia siguiente">→</button>
-        <span class="news-count" id="newsCount"></span>
-      </div>
     </div>
-    <div class="news-stack" id="newsStack" data-reveal style="--d:120ms"></div>
+    <div class="news-carousel" data-reveal style="--d:120ms" role="region" aria-roledescription="carrusel" aria-label="Noticias">
+      <button class="news-arrow" type="button" id="newsPrev" aria-label="Noticia anterior">←</button>
+      <div class="news-track" id="newsStack"></div>
+      <button class="news-arrow" type="button" id="newsNext" aria-label="Noticia siguiente">→</button>
+    </div>
+    <div class="news-current" id="newsCurrent" aria-live="polite"></div>
+    <p class="news-count" id="newsCount"></p>
   </div>
 </section>
 
