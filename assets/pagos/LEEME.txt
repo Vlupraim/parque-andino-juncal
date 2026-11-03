@@ -1,0 +1,16 @@
+Logos de los medios de pago
+===========================
+
+Pon aquí los logos OFICIALES que cada proveedor entrega a los comercios en su kit de marca:
+
+  webpay.svg       (Transbank)
+  mercadopago.svg  (Mercado Pago)
+  flow.svg         (Flow)
+  khipu.svg        (Khipu)
+
+Requisitos:
+- Fondo transparente. Ideal en SVG; si no, PNG transparente (y cambia la extensión en index.html).
+- Versión horizontal a color, pensada para fondo claro.
+- Respeta las reglas de uso de cada marca (no deformar ni recolorear).
+
+Mientras un archivo no exista, el botón muestra el nombre del medio de pago.

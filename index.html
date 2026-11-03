@@ -8,7 +8,7 @@
 <title>Parque Andino Juncal · Al pie del Glaciar Juncal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=b51576a1">
+<link rel="stylesheet" href="assets/site.css?v=8053014e">
 </head>
 <body>
 
@@ -274,9 +274,10 @@
       <div class="bk-block" id="bkPayBlock">
         <span class="bk-label">¿Cómo quieres pagar?</span>
         <div class="paymethods" role="radiogroup" aria-label="Medio de pago">
-          <button type="button" data-pay="webpay" role="radio" aria-checked="true"><b>Webpay</b><small>Débito, crédito o prepago</small></button>
-          <button type="button" data-pay="mercadopago" role="radio" aria-checked="false"><b>Mercado Pago</b><small>Tarjetas, saldo o cuotas</small></button>
-          <button type="button" data-pay="khipu" role="radio" aria-checked="false"><b>Transferencia</b><small>Desde tu banco, con Khipu</small></button>
+          <button type="button" data-pay="webpay" role="radio" aria-checked="true" aria-label="Webpay: Débito, crédito o prepago"><span class="pay-logo"><img src="assets/pagos/webpay.svg" alt="" onerror="this.remove()"><em>Webpay</em></span><small>Débito, crédito o prepago</small></button>
+          <button type="button" data-pay="mercadopago" role="radio" aria-checked="false" aria-label="Mercado Pago: Tarjetas, saldo o cuotas"><span class="pay-logo"><img src="assets/pagos/mercadopago.svg" alt="" onerror="this.remove()"><em>Mercado Pago</em></span><small>Tarjetas, saldo o cuotas</small></button>
+          <button type="button" data-pay="flow" role="radio" aria-checked="false" aria-label="Flow: Varios medios en una página"><span class="pay-logo"><img src="assets/pagos/flow.svg" alt="" onerror="this.remove()"><em>Flow</em></span><small>Varios medios en una página</small></button>
+          <button type="button" data-pay="khipu" role="radio" aria-checked="false" aria-label="Khipu: Transferencia desde tu banco"><span class="pay-logo"><img src="assets/pagos/khipu.svg" alt="" onerror="this.remove()"><em>Khipu</em></span><small>Transferencia desde tu banco</small></button>
         </div>
         <p class="pay-note" id="bkPayNote">Pagas en el formulario seguro de Webpay. No vemos ni guardamos los datos de tu tarjeta.</p>
       </div>
@@ -284,7 +285,7 @@
         <div><small id="bkSummary">2 adultos · solo el día</small><small class="bk-paylabel" id="bkPayLabel">Total</small><strong id="bkTotal">$16.000</strong><small class="bk-gate" id="bkGate" hidden></small></div>
         <button class="button dark" type="submit" id="bkSubmit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
       </div>
-      <p class="bk-foot">Pago con Webpay, Mercado Pago o transferencia (Khipu). Tu entrada llega al correo con un código QR.</p>
+      <p class="bk-foot">Pago con Webpay, Mercado Pago, Flow o Khipu. Tu entrada llega al correo con un código QR.</p>
       <p class="data-note">Usamos tus datos solo para gestionar tu reserva y tu ingreso al parque, conforme a la Ley 21.719. <a href="privacidad.html">Cómo tratamos tus datos</a>.</p>
     </form>
     <dialog class="ticket-dialog" id="ticketDialog" aria-labelledby="ticketTitle">
@@ -421,6 +422,6 @@
 <script src="assets/noticias-data.js?v=2ddb5498"></script>
 <script src="assets/logo-juncal-data.js?v=6f1ab5ad"></script>
 <script src="assets/ave-juncal.js?v=6f330c68"></script>
-<script src="assets/site.js?v=d7ccc152"></script>
+<script src="assets/site.js?v=864ba55d"></script>
 </body>
 </html>

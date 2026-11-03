@@ -382,7 +382,8 @@ function countUp(el) {
   const PAY = {
     webpay: { name: 'Webpay', note: 'Pagas en el formulario seguro de Webpay. No vemos ni guardamos los datos de tu tarjeta.' },
     mercadopago: { name: 'Mercado Pago', note: 'Puedes pagar en cuotas: si tienen interés, Mercado Pago te lo muestra antes de confirmar y lo cobra aparte.' },
-    khipu: { name: 'transferencia', note: 'Khipu te lleva al sitio de tu banco para autorizar la transferencia. La reserva se confirma apenas llega el pago.' }
+    flow: { name: 'Flow', note: 'Flow reúne varios medios en una sola página: tarjetas, transferencias y otros. Eliges allí cómo pagar.' },
+    khipu: { name: 'Khipu', note: 'Khipu te lleva al sitio de tu banco para autorizar la transferencia. La reserva se confirma apenas llega el pago.' }
   };
   state.payMethod = 'webpay';
   form.querySelectorAll('[data-pay]').forEach(b => b.addEventListener('click', () => {
