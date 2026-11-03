@@ -1,6 +1,6 @@
 // Service worker de la herramienta del guardaparque: guarda sus archivos para que abra y valide sin conexión.
 // Solo atiende sus propios archivos; el resto del sitio sigue funcionando normal.
-const CACHE = 'paj-guardaparque-v1';
+const CACHE = 'paj-guardaparque-v2';
 const FILES = [
   'guardaparque.html', 'guardaparque.webmanifest', 'assets/guardaparque.js', 'assets/boleto.js',
   'assets/vendor/jsQR.js', 'assets/cancelaciones.json', 'assets/icono-guardaparque.svg'

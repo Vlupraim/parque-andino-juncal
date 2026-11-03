@@ -75,8 +75,9 @@ input[type=date], select, input[type=number] { padding: 8px 10px; border-radius:
 .gate-card > p { margin: 0 0 8px; text-align: center; color: var(--body); font-size: 14px }
 .gate-card label { margin-top: 6px; font-size: 13px; font-weight: 600 }
 .gate-card select, .gate-card input { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font-size: 17px }
-.gate-card input { letter-spacing: .4em; text-align: center; font-size: 22px }
+.gate-card input.clave { letter-spacing: .3em }
 .gate-error { min-height: 1.2em; margin: 0; color: var(--bad); font-size: 14px; text-align: center }
+.gate-back { justify-self: center; margin-top: 2px; font-size: 13px; color: var(--body) }
 .gate-demo { margin: 6px 0 0; text-align: center; font-size: 12px; color: var(--body) }
 </style>
 </head>
@@ -90,14 +91,15 @@ input[type=date], select, input[type=number] { padding: 8px 10px; border-radius:
   <form class="gate-card" id="gateForm">
     <img src="assets/icono-guardaparque.svg" alt="">
     <h2>Ingreso de guardaparque</h2>
-    <p>Solo para el equipo del parque.</p>
-    <label for="gateUser">Quién eres</label>
-    <select id="gateUser"></select>
-    <label for="gatePin">PIN</label>
-    <input id="gatePin" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]*" maxlength="6" required>
+    <p>Acceso personal del equipo del parque.</p>
+    <label for="gateRut">RUT</label>
+    <input id="gateRut" type="text" inputmode="text" autocomplete="username" placeholder="12.345.678-9" maxlength="12" autocapitalize="characters" spellcheck="false" required>
+    <label for="gateClave">Clave</label>
+    <input id="gateClave" class="clave" type="password" autocomplete="current-password" required>
     <p class="gate-error" id="gateError" aria-live="assertive"></p>
     <button class="btn primary" type="submit">Entrar</button>
-    <p class="gate-demo">Maqueta: el PIN de prueba es 1911.</p>
+    <p class="gate-demo">Maqueta: RUT 11.111.111-1 y clave 1911.</p>
+    <a class="gate-back" href="./">Volver al sitio</a>
   </form>
 </div>
 <main>

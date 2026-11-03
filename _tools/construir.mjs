@@ -40,6 +40,7 @@ const head = (p, title, description) => `<!doctype html>
 <script>try{if(sessionStorage.getItem('paj-veil'))document.documentElement.classList.add('veil-arrive')}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="${p}assets/site.css">
 </head>
 <body>
@@ -79,7 +80,7 @@ export const footer = p => `<footer class="site-footer">
     </div>
     <div class="footer-bottom">
       <span>© 2026 Parque Andino Juncal · Comunidad Kenrick Lyon</span>
-      <span><a href="${p}privacidad.html">Privacidad y datos personales</a> · <a href="${p}terminos.html">Términos y condiciones</a> · Maqueta del rediseño</span>
+      <span><a href="${p}privacidad.html">Privacidad y datos personales</a> · <a href="${p}terminos.html">Términos y condiciones</a> · <a class="staff-link" href="${p}guardaparque.html" rel="nofollow">Acceso personal</a></span>
     </div>
   </div>
 </footer>`;

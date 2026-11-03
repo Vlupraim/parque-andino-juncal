@@ -19,28 +19,42 @@
   const STAY = { day: 'Solo el día', hornitos: 'Camping Los Hornitos', morrenas: 'Camping Las Morrenas', refugio: 'Refugio del Arriero' };
   const METHOD = { webpay: 'Webpay', mercadopago: 'Mercado Pago', flow: 'Flow', khipu: 'Khipu' };
 
-  // ── Acceso: cada guardaparque entra con su nombre y su PIN ──
+  // ── Acceso: cada guardaparque entra con su RUT y su clave ──
   // En producción: cuentas individuales en el servidor. El primer ingreso se hace con señal y deja la sesión
-  // guardada en el teléfono; el PIN la desbloquea sin conexión, y la administración puede revocar el equipo.
-  // En esta maqueta el PIN se compara en el teléfono, solo para mostrar el flujo.
-  const EQUIPO = [{ nombre: 'Guardaparque de turno', pin: '1911' }];
+  // guardada en el teléfono; la clave la desbloquea sin conexión, y la administración puede revocar el equipo.
+  // En esta maqueta la clave se compara en el teléfono, solo para mostrar el flujo.
+  const EQUIPO = [{ rut: '11111111-1', nombre: 'Guardaparque de turno', clave: '1911' }];
+  const limpiarRut = v => v.replace(/[^0-9kK]/g, '').toUpperCase();
+  const formatoRut = v => {
+    const c = limpiarRut(v);
+    if (c.length < 2) return c;
+    return c.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + c.slice(-1);
+  };
+  // Dígito verificador (módulo 11).
+  const rutValido = v => {
+    const c = limpiarRut(v), cuerpo = c.slice(0, -1);
+    if (!/^\d{7,8}$/.test(cuerpo)) return false;
+    let suma = 0, m = 2;
+    for (let i = cuerpo.length - 1; i >= 0; i--) { suma += cuerpo[i] * m; m = m === 7 ? 2 : m + 1; }
+    const dv = 11 - (suma % 11);
+    return c.slice(-1) === (dv === 11 ? '0' : dv === 10 ? 'K' : String(dv));
+  };
   let sesion = store.get('paj-sesion', null), alEntrar = null;
   function pedirAcceso() {
-    const gate = $('gate');
-    gate.hidden = false;
-    $('gateUser').innerHTML = EQUIPO.map((p, i) => `<option value="${i}">${p.nombre}</option>`).join('');
-    $('gatePin').value = '';
-    setTimeout(() => $('gatePin').focus(), 50);
+    $('gate').hidden = false;
+    $('gateClave').value = '';
+    $('gateError').textContent = '';
+    setTimeout(() => ($('gateRut').value ? $('gateClave') : $('gateRut')).focus(), 50);
   }
+  $('gateRut').addEventListener('input', e => { e.target.value = formatoRut(e.target.value); $('gateError').textContent = ''; });
   $('gateForm').addEventListener('submit', e => {
     e.preventDefault();
-    const p = EQUIPO[$('gateUser').value];
-    if ($('gatePin').value !== p.pin) {
-      $('gateError').textContent = 'PIN incorrecto.';
-      $('gatePin').value = '';
-      return navigator.vibrate?.([80, 60, 80]);
-    }
-    sesion = { nombre: p.nombre, desde: Date.now() };
+    const rut = limpiarRut($('gateRut').value);
+    const fallar = texto => { $('gateError').textContent = texto; navigator.vibrate?.([80, 60, 80]); };
+    if (!rutValido(rut)) return fallar('Revisa el RUT: el dígito verificador no calza.');
+    const p = EQUIPO.find(x => limpiarRut(x.rut) === rut);
+    if (!p || $('gateClave').value !== p.clave) { $('gateClave').value = ''; return fallar('RUT o clave incorrectos.'); }
+    sesion = { nombre: p.nombre, rut: formatoRut(rut), desde: Date.now() };
     store.set('paj-sesion', sesion);
     $('gate').hidden = true;
     $('who').textContent = sesion.nombre;

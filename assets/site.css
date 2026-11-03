@@ -848,3 +848,5 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
 .t-demo { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: #b8863b14; font-size: 13px; color: #6d5422 }
 .t-demo a { color: var(--forest); font-weight: 600 }
 .t-qr #ticketQr { width: 150px; height: 150px }
+/* Acceso del personal: discreto en el pie */
+.footer-bottom .staff-link { opacity: .55; transition: opacity .2s } .footer-bottom .staff-link:hover { opacity: 1 }

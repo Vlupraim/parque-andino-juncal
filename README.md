@@ -7,7 +7,7 @@ Maqueta del nuevo sitio de [parqueandinojuncal.cl](https://parqueandinojuncal.cl
 - `index.html`: portada (hero, reserva, tarifas, reglas, noticias, apoyo y contacto).
 - Páginas interiores con el contenido real del sitio original: `el-parque`, `conservacion`, `visita`, `actividades` (y 6 más en `actividades/`), `noticias` (y 5 más en `noticias/`), `apoya`, `preguntas-frecuentes` y `terminos`.
 - `concepto-logo.html`: explicación del logo y la animación del pájaro, para el cliente.
-- `guardaparque.html`: herramienta del guardaparque (se instala en el teléfono y funciona sin internet). Escanea el QR del ticket, verifica su firma, revisa fecha, cancelaciones y entradas repetidas, y registra ingresos y cobros. PIN de la maqueta: 1911.
+- `guardaparque.html`: herramienta del guardaparque (se instala en el teléfono y funciona sin internet). Escanea el QR del ticket, verifica su firma, revisa fecha, cancelaciones y entradas repetidas, y registra ingresos y cobros. Ingreso de la maqueta: RUT 11.111.111-1, clave 1911. Se llega desde «Acceso personal» en el pie del sitio.
 
 ### Tickets firmados
 
