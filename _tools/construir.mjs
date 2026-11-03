@@ -537,7 +537,7 @@ writeFileSync(indexFile, index);
 
 // Huella de versión en los CSS y JS propios (?v=…): cambia con el contenido, así ningún navegador
 // mezcla un HTML nuevo con un CSS o JS viejo guardado en caché.
-const assetNames = ['site.css', 'site.js', 'ave-juncal.js', 'logo-juncal-data.js', 'noticias-data.js'];
+const assetNames = ['site.css', 'site.js', 'ave-juncal.js', 'logo-juncal-data.js', 'noticias-data.js', 'boleto.js', 'boleto-firma-demo.js'];
 const hashes = Object.fromEntries(assetNames.map(name =>
   [name, createHash('sha1').update(readFileSync(join(root, 'assets', name))).digest('hex').slice(0, 8)]));
 for (const file of ['index.html', ...out]) {

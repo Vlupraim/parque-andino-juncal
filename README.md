@@ -7,6 +7,11 @@ Maqueta del nuevo sitio de [parqueandinojuncal.cl](https://parqueandinojuncal.cl
 - `index.html`: portada (hero, reserva, tarifas, reglas, noticias, apoyo y contacto).
 - Páginas interiores con el contenido real del sitio original: `el-parque`, `conservacion`, `visita`, `actividades` (y 6 más en `actividades/`), `noticias` (y 5 más en `noticias/`), `apoya`, `preguntas-frecuentes` y `terminos`.
 - `concepto-logo.html`: explicación del logo y la animación del pájaro, para el cliente.
+- `guardaparque.html`: herramienta del guardaparque (se instala en el teléfono y funciona sin internet). Escanea el QR del ticket, verifica su firma, revisa fecha, cancelaciones y entradas repetidas, y registra ingresos y cobros. PIN de la maqueta: 1911.
+
+### Tickets firmados
+
+El QR del ticket lleva los datos de la reserva firmados con ECDSA P-256 (`assets/boleto.js`), y el guardaparque los verifica con la clave pública, sin conexión. En la maqueta la firma se hace en el navegador con `assets/boleto-firma-demo.js`: **en producción esa clave privada vive solo en el servidor** y ese archivo se elimina. Las cancelaciones se descargan desde `assets/cancelaciones.json` (en producción, desde el servidor).
 
 Las páginas interiores, y el header y el pie que comparten con la portada, se generan con:
 

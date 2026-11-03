@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guardaparque · Parque Andino Juncal</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1f4a3d">
+<link rel="manifest" href="guardaparque.webmanifest">
+<link rel="icon" href="assets/icono-guardaparque.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icono-guardaparque.svg">
+<style>
+/* Herramienta de terreno: tipografía del sistema y sin recursos externos, para que todo funcione sin señal. */
+:root { --ink: #16302a; --body: #55635e; --paper: #f6f4ee; --forest: #1f4a3d; --ochre: #b8863b; --ok: #2d6a4f; --bad: #a8432f; --warn: #a86a1c; --line: #16302a1a }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased }
+button, input, select, textarea { font: inherit; color: inherit }
+header { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); background: var(--forest); color: #fff }
+header img { width: 34px; height: 34px; border-radius: 9px }
+header h1 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.2 }
+header small { display: block; font-size: 12px; opacity: .8; font-weight: 400 }
+.net { margin-left: auto; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #ffffff26 }
+.net.off { background: #e9c98f; color: #3e2f12 }
+main { max-width: 560px; margin: 0 auto; padding: 16px 16px 40px }
+.card { margin-top: 14px; padding: 16px; border-radius: 18px; background: #fff; border: 1px solid var(--line) }
+.card h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--ochre) }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap }
+.muted { color: var(--body); font-size: 14px }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 18px; border-radius: 14px; border: 1px solid var(--line); background: #fff; font-weight: 600; cursor: pointer }
+.btn.primary { width: 100%; background: var(--forest); border-color: var(--forest); color: #fff; font-size: 17px; min-height: 56px }
+.btn.small { min-height: 38px; padding: 8px 12px; font-size: 14px }
+.btn:disabled { opacity: .45; cursor: not-allowed }
+.scan { position: relative; margin-top: 12px; border-radius: 16px; overflow: hidden; background: #000; aspect-ratio: 1 }
+.scan video { width: 100%; height: 100%; object-fit: cover; display: block }
+.scan::after { content: ''; position: absolute; inset: 18%; border: 3px solid #ffffffd9; border-radius: 18px; box-shadow: 0 0 0 999px #0006 }
+.scan[hidden] { display: none }
+textarea { width: 100%; min-height: 70px; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); font-size: 13px; resize: vertical }
+input[type=date], select, input[type=number] { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper) }
+.result { margin-top: 14px; border-radius: 18px; overflow: hidden; border: 2px solid var(--line); background: #fff; animation: pop 320ms cubic-bezier(.34, 1.56, .64, 1) }
+@keyframes pop { from { transform: scale(.96); opacity: 0 } }
+.result[hidden] { display: none }
+.verdict { display: flex; align-items: center; gap: 12px; padding: 16px; color: #fff; font-size: 20px; font-weight: 700 }
+.verdict i { display: grid; place-items: center; width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; background: #ffffff33; font-style: normal; font-size: 22px }
+.verdict small { display: block; font-size: 14px; font-weight: 500; opacity: .92 }
+.result.ok { border-color: var(--ok) } .result.ok .verdict { background: var(--ok) }
+.result.bad { border-color: var(--bad) } .result.bad .verdict { background: var(--bad) }
+.result.warn { border-color: var(--warn) } .result.warn .verdict { background: var(--warn) }
+.details { padding: 6px 16px 16px }
+.details dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin: 10px 0 0 }
+.details dt { color: var(--body); font-size: 14px }
+.details dd { margin: 0; font-weight: 600; text-align: right }
+.flag { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #b8863b1a; color: #6d5422; font-size: 14px }
+.actions { display: grid; gap: 10px; margin-top: 14px }
+.check { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--paper); font-size: 15px }
+.check input { width: 22px; height: 22px; accent-color: var(--forest) }
+.charge { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--paper); font-size: 15px }
+.charge[hidden] { display: none }
+.link { background: none; border: 0; padding: 4px 0; color: var(--bad); font-size: 14px; text-decoration: underline; cursor: pointer; justify-self: start }
+.log { list-style: none; margin: 8px 0 0; padding: 0 }
+.log li { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px }
+.log li:first-child { border-top: 0 }
+.log time { font-variant-numeric: tabular-nums; color: var(--body) }
+.totals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; text-align: center }
+.totals div { padding: 10px 6px; border-radius: 12px; background: var(--paper) }
+.totals b { display: block; font-size: 20px }
+.totals span { font-size: 12px; color: var(--body) }
+.demo { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #b8863b1a; color: #6d5422; font-size: 13px }
+.logout { padding: 0; border: 0; background: none; color: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; opacity: .9 }
+/* Acceso: tarjeta centrada sobre el verde del parque. */
+.gate { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: radial-gradient(circle at 50% 20%, #2f6150, #10261f 70%) }
+.gate[hidden] { display: none }
+.gate-card { width: min(380px, 100%); padding: 26px 22px; border-radius: 24px; background: var(--paper); box-shadow: 0 40px 80px -30px #000; display: grid; gap: 8px; animation: pop 420ms cubic-bezier(.34, 1.56, .64, 1) }
+.gate-card img { width: 56px; height: 56px; border-radius: 14px; justify-self: center }
+.gate-card h2 { margin: 6px 0 0; text-align: center; font-size: 22px }
+.gate-card > p { margin: 0 0 8px; text-align: center; color: var(--body); font-size: 14px }
+.gate-card label { margin-top: 6px; font-size: 13px; font-weight: 600 }
+.gate-card select, .gate-card input { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; font-size: 17px }
+.gate-card input { letter-spacing: .4em; text-align: center; font-size: 22px }
+.gate-error { min-height: 1.2em; margin: 0; color: var(--bad); font-size: 14px; text-align: center }
+.gate-demo { margin: 6px 0 0; text-align: center; font-size: 12px; color: var(--body) }
+</style>
+</head>
+<body>
+<header>
+  <img src="assets/icono-guardaparque.svg" alt="">
+  <h1>Control de ingreso<small><span id="who">Parque Andino Juncal</span> · <button class="logout" type="button" id="logout">Salir</button></small></h1>
+  <span class="net" id="net">En línea</span>
+</header>
+<div class="gate" id="gate" hidden>
+  <form class="gate-card" id="gateForm">
+    <img src="assets/icono-guardaparque.svg" alt="">
+    <h2>Ingreso de guardaparque</h2>
+    <p>Solo para el equipo del parque.</p>
+    <label for="gateUser">Quién eres</label>
+    <select id="gateUser"></select>
+    <label for="gatePin">PIN</label>
+    <input id="gatePin" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]*" maxlength="6" required>
+    <p class="gate-error" id="gateError" aria-live="assertive"></p>
+    <button class="btn primary" type="submit">Entrar</button>
+    <p class="gate-demo">Maqueta: el PIN de prueba es 1911.</p>
+  </form>
+</div>
+<main>
+  <section class="card">
+    <button class="btn primary" type="button" id="scanBtn">Escanear ticket</button>
+    <div class="scan" id="scanBox" hidden><video id="video" playsinline muted></video></div>
+    <details style="margin-top:10px">
+      <summary class="muted">Ingresar el código a mano</summary>
+      <textarea id="manual" placeholder="Pega aquí el contenido del QR (empieza con PAJ1.)"></textarea>
+      <button class="btn small" type="button" id="manualBtn">Validar</button>
+    </details>
+    <canvas id="frame" hidden></canvas>
+  </section>
+
+  <section class="result" id="result" hidden aria-live="assertive"></section>
+
+  <section class="card">
+    <h2>Sincronización</h2>
+    <div class="row"><span class="muted" id="syncInfo">Sin sincronizar</span><button class="btn small" type="button" id="syncBtn">Sincronizar</button></div>
+    <p class="muted" style="margin:10px 0 0">Descarga las cancelaciones cuando hay señal. Sin señal, valida igual: la firma del ticket se comprueba en el teléfono.</p>
+    <div class="row" style="margin-top:12px"><label class="muted" for="fecha">Fecha de control</label><input type="date" id="fecha"></div>
+    <p class="demo" id="demoNote" hidden></p>
+  </section>
+
+  <section class="card">
+    <h2>Ingresos de hoy</h2>
+    <div class="totals"><div><b id="tPersonas">0</b><span>personas</span></div><div><b id="tEfectivo">$0</b><span>efectivo</span></div><div><b id="tTarjeta">$0</b><span>tarjeta</span></div></div>
+    <ul class="log" id="log"></ul>
+  </section>
+</main>
+<script src="assets/boleto.js"></script>
+<script src="assets/vendor/jsQR.js"></script>
+<script src="assets/guardaparque.js"></script>
+</body>
+</html>

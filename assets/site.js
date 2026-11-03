@@ -480,14 +480,25 @@ function countUp(el) {
       <div class="t-cut" aria-hidden="true"></div>
       <h4>Para entrar</h4>
       <ul class="t-list"><li>Presenta este código en la barrera de Los Hornitos.</li>${bring}<li>Horario: lunes a viernes de 8:00 a 20:00; sábado y domingo de 7:00 a 20:00.</li></ul>
-      <p class="t-small">Maqueta: el pago en línea y el envío por correo todavía no están conectados.</p>`;
+      <p class="t-small">Maqueta: el pago en línea y el envío por correo todavía no están conectados.</p>
+      <p class="t-demo" id="ticketDemo" hidden></p>`;
     dialog.showModal();
+    // El QR lleva los datos de la reserva firmados: el guardaparque los verifica sin conexión.
+    const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const datos = {
+      c: code, d: iso(state.day), n: state.stay === 'day' ? 0 : state.nights, a: state.adults, k: state.kids, s: state.stay,
+      m: a.payNow ? state.payMethod : null, p: a.payNow, r: a.discount, g: a.gate ? [a.atGateResident, a.atGateFull] : null
+    };
     try {
+      const token = await window.firmarBoletoDemo(datos);
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js');
       const qr = window.qrcode(0, 'M');
-      qr.addData(code);
+      qr.addData(token);
       qr.make();
       document.getElementById('ticketQr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+      const demo = document.getElementById('ticketDemo');
+      demo.hidden = false;
+      demo.innerHTML = `Demo: <a href="guardaparque.html#t=${token}" target="_blank" rel="noopener">validar este ticket como guardaparque ↗</a>`;
     } catch { document.getElementById('ticketQr').textContent = code; }
   });
   document.getElementById('ticketClose').addEventListener('click', () => dialog.close());

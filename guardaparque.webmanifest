@@ -1,0 +1,12 @@
+{
+  "name": "Guardaparque · Parque Andino Juncal",
+  "short_name": "Guardaparque",
+  "description": "Validación de tickets de reserva, también sin conexión.",
+  "start_url": "guardaparque.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10261f",
+  "theme_color": "#1f4a3d",
+  "lang": "es-CL",
+  "icons": [{ "src": "assets/icono-guardaparque.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
