@@ -850,3 +850,13 @@ function checkResidence(onResult) {
   toggle.addEventListener('click', () => setPaused(!paused));
   schedule();
 })();
+
+// El hero se reacomoda cuando aparece la tarjeta de estado (la misma señal de su animación de entrada).
+(() => {
+  const hero = document.querySelector('.hero:not(.hero--page)'), card = document.querySelector('.status-card');
+  if (!hero || !card) return;
+  const settle = () => card.classList.contains('is-in') && (hero.classList.add('is-settled'), watch.disconnect());
+  const watch = new MutationObserver(settle);
+  watch.observe(card, { attributes: true, attributeFilter: ['class'] });
+  settle();
+})();

@@ -850,3 +850,10 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
 .t-qr #ticketQr { width: 150px; height: 150px }
 /* Acceso del personal: discreto en el pie */
 .footer-bottom .staff-link { opacity: .55; transition: opacity .2s } .footer-bottom .staff-link:hover { opacity: 1 }
+/* Primera vista: sin la tarjeta de estado a la vista, el texto y los controles bajan al centro óptico.
+   Cuando la tarjeta aparece, suben despacio a su lugar para dejarle espacio. */
+.hero:not(.hero--page) .hero-content, .hero-controls { transition: transform 1.4s cubic-bezier(.22, .61, .36, 1) }
+.hero:not(.hero--page):not(.is-settled) .hero-content { transform: translateY(40px) }
+.hero:not(.is-settled) .hero-controls { transform: translateY(84px) }
+@media (max-width: 900px) { .hero:not(.is-settled) .hero-controls { transform: translateY(50px) } }
+@media (prefers-reduced-motion: reduce) { .hero:not(.hero--page) .hero-content, .hero-controls { transition: none } }
