@@ -187,7 +187,7 @@ const faqs = [
   ['Si llego a Los Hornitos a las 9:30, ¿alcanzo a ir al glaciar y volver sin problemas con el Estero Monos de Agua?', '<p>Depende del estado físico del grupo, de su experiencia cruzando ríos de montaña y del tiempo que quiera quedarse en el glaciar.</p><p>En época de deshielo lo ideal es salir a las 8:00 desde el refugio para cruzar el estero de vuelta antes de las 14:00. Del estero al glaciar hay cerca de una hora de caminata. Entre mediados de enero y fines de febrero el peligro del estero es 4 de 10 antes de la una de la tarde, y sube a 8 de 10 después de las dos.</p>'],
   ['¿Hay una cuerda para cruzar el Estero Monos de Agua?', '<p>No. El curso del río cambia día a día, así que los puntos seguros de cruce también cambian. Tampoco habrá puente, para preservar la experiencia de montaña.</p>'],
   ['¿Cuándo es la época de mayor caudal del estero?', '<p>Entre enero y febrero.</p>'],
-  ['¿Puedo llevar mascotas?', '<p>No. Son una amenaza para la fauna nativa.</p>'],
+  ['¿Puedo llevar mascotas?', '<p>No. Está prohibido el ingreso de mascotas al parque.</p>'],
   ['¿Se puede recorrer el parque en bicicleta?', '<p>Solo por el camino público. Los ciclistas pueden llegar a Los Hornitos, dejar la bicicleta al cuidado del guardaparque y seguir a pie. El objetivo principal del parque es proteger este ecosistema altoandino; agradecemos la comprensión de la comunidad ciclista.</p>'],
   ['¿Cómo está el camino para un vehículo bajo?', '<p>Por lo general los autos bajos llegan a Los Hornitos en verano. El camino es público y su estado depende del clima: las lluvias de verano pueden provocar derrumbes. Revisa nuestro Facebook antes de viajar.</p>'],
   ['¿Cómo llego al parque?', '<p>El refugio de Los Hornitos, sede del parque, está a 9 kilómetros de la ruta CH-60 a Mendoza, camino a Portillo. En transporte público hay que tomar bus o colectivo a Río Blanco, seguir hasta la Curva Cero y caminar los 9 km de ripio. Ver <a href="visita.html#como-llegar">Cómo llegar</a>.</p>'],
@@ -298,7 +298,7 @@ out.push(page('visita.html', {
     <li><b>Plantas:</b> no saques plantas, pastos, raíces ni palos. No cortes flores.</li>
     <li><b>Basura:</b> llévate toda tu basura y la que encuentres. No la quemes, no la entierres, no la tires al agua.</li>
     <li><b>Fuego:</b> solo en el camping de Los Hornitos, con tu propia leña.</li>
-    <li><b>Mascotas:</b> prohibidas; son una amenaza para la fauna nativa.</li>
+    <li><b>Mascotas:</b> está prohibido su ingreso al parque.</li>
     <li><b>Caza y pesca:</b> totalmente prohibidas, igual que ingresar armas de fuego.</li>
   </ul>
   <h3 data-reveal>Recomendaciones</h3>
