@@ -426,7 +426,13 @@ function countUp(el) {
     document.getElementById('bkAdults').textContent = adults;
     document.getElementById('bkKids').textContent = kids;
     document.getElementById('bkNightsOut').textContent = nights;
-    document.getElementById('bkNights').hidden = stay === 'day';
+    // "Noches" aparece en la columna de visitantes con un pop al elegir alojamiento, y se va igual al volver a "Solo el día".
+    const nightsBox = document.getElementById('bkNights'), showNights = stay !== 'day';
+    if (nightsBox.classList.contains('is-shown') !== showNights) {
+      nightsBox.classList.toggle('is-shown', showNights);
+      nightsBox.toggleAttribute('inert', !showNights);
+      nightsBox.setAttribute('aria-hidden', !showNights);
+    }
     const people = `${adults} adulto${adults > 1 ? 's' : ''}` + (kids ? ` y ${kids} niño${kids > 1 ? 's' : ''}` : '');
     const when = stay === 'day' ? fmt(state.day) : `${fmt(state.day)} → ${fmt(departure())}`;
     const sleep = stay === 'day' ? 'Sin alojamiento' : `${names[stay]} · ${nights} noche${nights > 1 ? 's' : ''}`;

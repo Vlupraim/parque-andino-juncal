@@ -8,7 +8,7 @@
 <title>Parque Andino Juncal · Al pie del Glaciar Juncal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=8053014e">
+<link rel="stylesheet" href="assets/site.css?v=d344aaa6">
 </head>
 <body>
 
@@ -195,6 +195,15 @@
       <p data-reveal style="--d:140ms">Elige el día, cuántos vienen y si se quedan a dormir.</p>
     </div>
     <form class="booker" data-reveal style="--d:180ms" onsubmit="return false">
+      <div class="bk-block bk-stay">
+        <span class="bk-label">¿Se quedan a dormir?</span>
+        <div class="stay" id="bkStay">
+          <button type="button" data-stay="day" aria-pressed="true">Solo el día<small>Sin alojamiento</small></button>
+          <button type="button" data-stay="hornitos">Los Hornitos<small>Camping</small></button>
+          <button type="button" data-stay="morrenas">Las Morrenas<small>Camping</small></button>
+          <button type="button" data-stay="refugio">Refugio<small>Habitación</small></button>
+        </div>
+      </div>
       <div class="bk-top">
       <div class="bk-block">
         <span class="bk-label" id="bkDateLabel">Día</span>
@@ -214,6 +223,7 @@
         <div class="counters">
           <div class="counter"><span>Adultos</span><button type="button" data-step="adults:-1" aria-label="Menos adultos">−</button><output id="bkAdults">2</output><button type="button" data-step="adults:1" aria-label="Más adultos">+</button></div>
           <div class="counter"><span>Niños<small>hasta 12 años</small></span><button type="button" data-step="kids:-1" aria-label="Menos niños">−</button><output id="bkKids">0</output><button type="button" data-step="kids:1" aria-label="Más niños">+</button></div>
+          <div class="nights-wrap" id="bkNights" aria-hidden="true" inert><div class="counter nights-row"><span>Noches<small>de alojamiento</small></span><button type="button" data-step="nights:-1" aria-label="Menos noches">−</button><output id="bkNightsOut">1</output><button type="button" data-step="nights:1" aria-label="Más noches">+</button></div></div>
           <label class="check"><input type="checkbox" id="bkResident" aria-controls="bkProof"> Somos residentes de San Felipe o Los Andes</label>
         </div>
       </div>
@@ -260,16 +270,6 @@
             <button class="proof-delete" type="button" id="proofDelete" hidden>Eliminar foto y resultado</button>
           </div>
         </div>
-      </div>
-      <div class="bk-block">
-        <span class="bk-label">¿Se quedan a dormir?</span>
-        <div class="stay" id="bkStay">
-          <button type="button" data-stay="day" aria-pressed="true">Solo el día<small>Sin alojamiento</small></button>
-          <button type="button" data-stay="hornitos">Los Hornitos<small>Camping</small></button>
-          <button type="button" data-stay="morrenas">Las Morrenas<small>Camping</small></button>
-          <button type="button" data-stay="refugio">Refugio<small>Habitación</small></button>
-        </div>
-        <div class="nights counter" id="bkNights" hidden><span>Noches</span><button type="button" data-step="nights:-1" aria-label="Menos noches">−</button><output id="bkNightsOut">1</output><button type="button" data-step="nights:1" aria-label="Más noches">+</button></div>
       </div>
       <div class="bk-block" id="bkPayBlock">
         <span class="bk-label">¿Cómo quieres pagar?</span>
@@ -422,6 +422,6 @@
 <script src="assets/noticias-data.js?v=2ddb5498"></script>
 <script src="assets/logo-juncal-data.js?v=6f1ab5ad"></script>
 <script src="assets/ave-juncal.js?v=6f330c68"></script>
-<script src="assets/site.js?v=864ba55d"></script>
+<script src="assets/site.js?v=327d9440"></script>
 </body>
 </html>

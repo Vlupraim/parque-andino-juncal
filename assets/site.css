@@ -825,3 +825,23 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
 .pay-logo em { font: 700 19px/1 var(--sans); font-style: normal; letter-spacing: -.01em; color: var(--ink) }
 .paymethods button small { font-size: 12.5px; line-height: 1.35; color: var(--body) }
 @media (max-width: 760px) { .paymethods { grid-template-columns: 1fr 1fr } }
+
+/* ───────── Reservador: alojamiento arriba (compacto) y noches con pop ───────── */
+.bk-stay .stay { grid-template-columns: repeat(4, 1fr); gap: 8px }
+.bk-stay .stay button { padding: 10px 12px; border-radius: 12px; font-size: 15px }
+.bk-stay .stay button small { font-size: 11.5px }
+.bk-stay + .bk-top { margin-top: 24px; padding-top: 26px; border-top: 1px solid #16302a0f }
+.bk-top + .proof + .bk-block, .bk-top + .bk-block { margin-top: 30px; padding-top: 30px; border-top: 1px solid #16302a0f }
+/* Noches: colapsado ocupa cero; al aparecer crece con rebote y un destello suave. */
+.nights-wrap { display: grid; grid-template-rows: 0fr; opacity: 0; transform: scale(.92) translateY(-6px); transform-origin: 50% 0;
+  transition: grid-template-rows 420ms var(--ease), opacity 260ms, transform 420ms var(--ease), margin 420ms var(--ease); margin: -8px 0 }
+.nights-wrap > .nights-row { overflow: hidden; min-height: 0 }
+.nights-wrap.is-shown { grid-template-rows: 1fr; opacity: 1; transform: none; margin: 0;
+  transition: grid-template-rows 480ms var(--ease), opacity 300ms, transform 520ms cubic-bezier(.34, 1.56, .64, 1), margin 480ms var(--ease) }
+.nights-wrap.is-shown > .nights-row { animation: nights-glow 1200ms ease-out 200ms }
+.nights-row { margin: 0 -10px; padding: 8px 10px; border-radius: 14px }
+@keyframes nights-glow { 0% { background: #b8863b2e; box-shadow: 0 0 0 2px #b8863b66 } 100% { background: transparent; box-shadow: 0 0 0 2px transparent } }
+@media (prefers-reduced-motion: reduce) { .nights-wrap, .nights-wrap.is-shown { transition: none } .nights-wrap.is-shown > .nights-row { animation: none } }
+@media (max-width: 700px) { .bk-stay .stay { grid-template-columns: 1fr 1fr } }
+.nights-wrap:not(.is-shown) > .nights-row { padding-block: 0 }
+.nights-row { transition: padding 420ms var(--ease) }
