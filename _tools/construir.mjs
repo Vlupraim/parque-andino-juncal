@@ -40,7 +40,7 @@ const head = (p, title, description) => `<!doctype html>
 <script>try{if(sessionStorage.getItem('paj-veil'))document.documentElement.classList.add('veil-arrive')}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="icon" href="${p}assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${p}assets/favicon.svg?v=2" type="image/svg+xml">
 <link rel="stylesheet" href="${p}assets/site.css">
 </head>
 <body>
