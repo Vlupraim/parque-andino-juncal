@@ -548,4 +548,13 @@ for (const file of ['index.html', ...out]) {
   writeFileSync(path, html);
 }
 
+// Favicon incrustado en cada página: la pestaña lo muestra apenas llega el HTML, sin esperar otra descarga,
+// y no se pierde durante la transición entre páginas.
+const favicon = 'data:image/svg+xml,' + encodeURIComponent(readFileSync(join(root, 'assets/favicon.svg'), 'utf8').trim());
+for (const file of ['index.html', 'concepto-logo.html', ...out]) {
+  const path = join(root, file);
+  writeFileSync(path, readFileSync(path, 'utf8').replace(/<link rel="icon" href="[^"]*" type="image\/svg\+xml">/,
+    `<link rel="icon" href="${favicon}" type="image/svg+xml">`));
+}
+
 console.log(out.length + ' páginas:\n' + out.join('\n'));
