@@ -8,7 +8,7 @@
 <title>Parque Andino Juncal · Al pie del Glaciar Juncal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=b6af359e">
+<link rel="stylesheet" href="assets/site.css?v=b51576a1">
 </head>
 <body>
 
@@ -271,11 +271,20 @@
         </div>
         <div class="nights counter" id="bkNights" hidden><span>Noches</span><button type="button" data-step="nights:-1" aria-label="Menos noches">−</button><output id="bkNightsOut">1</output><button type="button" data-step="nights:1" aria-label="Más noches">+</button></div>
       </div>
+      <div class="bk-block" id="bkPayBlock">
+        <span class="bk-label">¿Cómo quieres pagar?</span>
+        <div class="paymethods" role="radiogroup" aria-label="Medio de pago">
+          <button type="button" data-pay="webpay" role="radio" aria-checked="true"><b>Webpay</b><small>Débito, crédito o prepago</small></button>
+          <button type="button" data-pay="mercadopago" role="radio" aria-checked="false"><b>Mercado Pago</b><small>Tarjetas, saldo o cuotas</small></button>
+          <button type="button" data-pay="khipu" role="radio" aria-checked="false"><b>Transferencia</b><small>Desde tu banco, con Khipu</small></button>
+        </div>
+        <p class="pay-note" id="bkPayNote">Pagas en el formulario seguro de Webpay. No vemos ni guardamos los datos de tu tarjeta.</p>
+      </div>
       <div class="bk-total">
         <div><small id="bkSummary">2 adultos · solo el día</small><small class="bk-paylabel" id="bkPayLabel">Total</small><strong id="bkTotal">$16.000</strong><small class="bk-gate" id="bkGate" hidden></small></div>
         <button class="button dark" type="submit" id="bkSubmit" data-magnetic><span class="magnetic-label">Continuar al pago</span></button>
       </div>
-      <p class="bk-foot">Pago con Webpay o Mercado Pago. Tu entrada llega al correo con un código QR.</p>
+      <p class="bk-foot">Pago con Webpay, Mercado Pago o transferencia (Khipu). Tu entrada llega al correo con un código QR.</p>
       <p class="data-note">Usamos tus datos solo para gestionar tu reserva y tu ingreso al parque, conforme a la Ley 21.719. <a href="privacidad.html">Cómo tratamos tus datos</a>.</p>
     </form>
     <dialog class="ticket-dialog" id="ticketDialog" aria-labelledby="ticketTitle">
@@ -412,6 +421,6 @@
 <script src="assets/noticias-data.js?v=2ddb5498"></script>
 <script src="assets/logo-juncal-data.js?v=6f1ab5ad"></script>
 <script src="assets/ave-juncal.js?v=6f330c68"></script>
-<script src="assets/site.js?v=a3f4a329"></script>
+<script src="assets/site.js?v=d7ccc152"></script>
 </body>
 </html>

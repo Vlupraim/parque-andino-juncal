@@ -378,6 +378,18 @@ function countUp(el) {
     render();
   });
   // Dos caminos para el descuento: subir el comprobante ahora, o acreditarlo en la entrada y pagar allá las entradas.
+  // Medio de pago: cada uno sería un adaptador en el backend (crear pago, confirmar pago, reembolsar).
+  const PAY = {
+    webpay: { name: 'Webpay', note: 'Pagas en el formulario seguro de Webpay. No vemos ni guardamos los datos de tu tarjeta.' },
+    mercadopago: { name: 'Mercado Pago', note: 'Puedes pagar en cuotas: si tienen interés, Mercado Pago te lo muestra antes de confirmar y lo cobra aparte.' },
+    khipu: { name: 'transferencia', note: 'Khipu te lleva al sitio de tu banco para autorizar la transferencia. La reserva se confirma apenas llega el pago.' }
+  };
+  state.payMethod = 'webpay';
+  form.querySelectorAll('[data-pay]').forEach(b => b.addEventListener('click', () => {
+    state.payMethod = b.dataset.pay;
+    form.querySelectorAll('[data-pay]').forEach(x => x.setAttribute('aria-checked', x === b));
+    render();
+  }));
   state.proofMode = 'online';
   form.querySelectorAll('[data-proof-mode]').forEach(b => b.addEventListener('click', () => {
     state.proofMode = b.dataset.proofMode;
@@ -423,7 +435,9 @@ function countUp(el) {
     const gateLine = document.getElementById('bkGate');
     gateLine.hidden = !a.gate;
     gateLine.innerHTML = `En la entrada: <b>${clp(a.atGateResident)}</b> acreditando residencia, o ${clp(a.atGateFull)} sin acreditar.`;
-    document.querySelector('#bkSubmit .magnetic-label').textContent = a.payNow ? 'Continuar al pago' : 'Reservar y recibir ticket';
+    document.getElementById('bkPayBlock').hidden = !a.payNow;
+    document.getElementById('bkPayNote').textContent = PAY[state.payMethod].note;
+    document.querySelector('#bkSubmit .magnetic-label').textContent = a.payNow ? `Pagar con ${PAY[state.payMethod].name}` : 'Reservar y recibir ticket';
     return { when, people, sleep };
   }
   render();
@@ -438,7 +452,7 @@ function countUp(el) {
     const fullDate = state.stay === 'day'
       ? `${long(state.day)} de ${state.day.getFullYear()}`
       : `${long(state.day)} al ${long(departure())}`;
-    const paid = a.payNow ? `<div class="t-row"><span>Pagado en línea</span><b>${clp(a.payNow)}</b></div>` : '';
+    const paid = a.payNow ? `<div class="t-row"><span>Pagado con ${PAY[state.payMethod].name}</span><b>${clp(a.payNow)}</b></div>` : '';
     const atGate = a.gate
       ? `<div class="t-row t-gate"><span>A pagar en la entrada</span><b>${clp(a.atGateResident)}</b></div><p class="t-small">Con 25% en la entrada adulto si acreditas residencia. Sin acreditar: ${clp(a.atGateFull)}.</p>`
       : '';

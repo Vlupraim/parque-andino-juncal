@@ -809,3 +809,13 @@ html.veil-arrive::before { content: ''; position: fixed; inset: 0; z-index: 998;
   .proof-head .proof-mode { grid-template-columns: 1fr }
 }
 .cal-legend span[hidden] { display: none }
+
+/* Medio de pago */
+.paymethods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.paymethods button { padding: 14px 16px; border-radius: 14px; border: 1px solid #16302a1f; background: var(--paper); text-align: left; font: inherit; color: var(--ink); cursor: pointer; transition: border-color .2s, box-shadow .2s, background .2s }
+.paymethods button b { display: block; font-size: 16px }
+.paymethods button small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--body) }
+.paymethods button[aria-checked="true"] { background: #1f4a3d0a; border-color: var(--forest); box-shadow: inset 0 0 0 1px var(--forest) }
+.pay-note { margin-top: 10px; font-size: 13.5px; color: var(--body) }
+#bkPayBlock[hidden] { display: none }
+@media (max-width: 700px) { .paymethods { grid-template-columns: 1fr } }

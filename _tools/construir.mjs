@@ -486,7 +486,7 @@ out.push(page('privacidad.html', {
   <tr><th>Cuándo</th><th>Datos</th><th>Para qué</th><th>Cuánto tiempo</th></tr>
   <tr><td>Reserva</td><td>Nombre, RUT, correo, teléfono, fecha, número de visitantes y alojamiento.</td><td>Gestionar tu reserva, emitir tu entrada y controlar los cupos.</td><td>[pendiente, p. ej. 12 meses]; lo tributario, según exige la ley.</td></tr>
   <tr><td>Ficha del visitante</td><td>Itinerario y contacto de emergencia.</td><td>Tu seguridad en la montaña y la búsqueda en caso de emergencia.</td><td>Hasta el fin de la temporada.</td></tr>
-  <tr><td>Pago</td><td>Monto y estado del pago.</td><td>Confirmar tu reserva. Los datos de tu tarjeta los procesa el proveedor de pago (Webpay o Mercado Pago); nosotros no los vemos ni los guardamos.</td><td>Según la normativa tributaria.</td></tr>
+  <tr><td>Pago</td><td>Monto y estado del pago.</td><td>Confirmar tu reserva. Los datos de tu tarjeta o de tu banco los procesa el proveedor de pago que elijas (Webpay, Mercado Pago o Khipu); nosotros no los vemos ni los guardamos.</td><td>Según la normativa tributaria.</td></tr>
   <tr><td>Formulario de contacto</td><td>Nombre, correo y mensaje.</td><td>Responder tu consulta.</td><td>[pendiente, p. ej. 12 meses].</td></tr>
 </table>
 
